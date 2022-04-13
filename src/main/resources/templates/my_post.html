@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 게시글</title>
+
+    <!-- Custom fonts for this template -->
+    <link th:href="@{bootstrap/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link
+        th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{bootstrap/css/sb-admin-2.min.css}" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link th:href="@{bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
+    <script th:inline="javascript">
+        function deletePost(boardId) {
+            location.href="/post_delete?boardId=" + boardId;
+            location.reload();
+        }
+    </script>
+</head>
+<body>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h5 class="m-0 font-weight-bold text-primary">나의 게시글</h5>
+        <a th:href="@{/mainPage}" class="btn btn-primary btn-user btn-block">
+            메인페이지로
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>삭제</th>
+                    <th>상세보기</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="post : ${myPostList}">
+                    <td th:text="${post.title}"></td>
+                    <th:block th:if="${post.delete == 0}">
+<!--                        <td><a th:onclick="deletePost(${post.boardId})">삭제하기</a></td>-->
+                        <td><a th:href="@{/post_delete(boardId = ${post.boardId})}">삭제하기</a></td>
+<!--                        <td onclick="deletePost(${post.boardId})">삭제하기</td>-->
+                    </th:block>
+                    <th:block th:if="${post.delete == 1}">
+                        <td>삭제된 게시글</td>
+                    </th:block>
+                    <td><a th:href="@{/post_update(boardId = ${post.boardId})}">보기</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="bootstrap/vendor/jquery/jquery.min.js"></script>
+<script src="bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="bootstrap/js/sb-admin-2.min.js"></script>
+
+<!-- Page level plugins -->
+<script src="bootstrap/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="bootstrap/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+</body>
+</html>
