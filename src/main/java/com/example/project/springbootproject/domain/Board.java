@@ -23,7 +23,7 @@ public class Board {
     @Column(name = "bd_title")
     private String title;
 
-    @Column(name = "bd_content")
+    @Column(name = "bd_content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "bd_delete")

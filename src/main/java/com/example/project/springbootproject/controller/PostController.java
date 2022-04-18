@@ -11,6 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +29,18 @@ public class PostController {
     private final PostService postService;
 
     EntityManager em;
+
+    @GetMapping("/postList")
+    public String postList(Model model, @PageableDefault(size = 5, sort ="boardId", direction = Sort.Direction.DESC)
+        Pageable pageable, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        session.setAttribute("user", user);
+        model.addAttribute("userSession", user);
+        model.addAttribute("boardList", postService.getBoardList(pageable));
+
+        return "post";
+    }
 
     @GetMapping("/post")
     public String post(Model model, HttpServletRequest request) {
@@ -68,19 +84,20 @@ public class PostController {
         @RequestParam(value = "content") String content, Model model) {
         postService.updateBoard(boardId, title, content);
 
-        return "my_post";
+        return "redirect:/my_post";
 
     }
 
     @GetMapping("/post_delete")
-    public String postDelete(@RequestParam(value="boardId") int boardId, Model model, HttpServletRequest request) {
+    public String postDelete(@RequestParam(value="boardId") int boardId, Model model, HttpServletRequest request,
+        @PageableDefault(size = 2, sort ="boardId", direction = Sort.Direction.DESC) Pageable pageable) {
         postService.deleteBoard(boardId);
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         session.setAttribute("user", user);
         model.addAttribute("userSession", user);
-        model.addAttribute("myPostList", myPostList(request));
+        model.addAttribute("myPostList", myPostList(request, pageable));
 
         return "redirect:/my_post";
     }
@@ -97,11 +114,11 @@ public class PostController {
     }
 
     @ModelAttribute("myPostList")
-    public List<Board> myPostList(HttpServletRequest request) {
+    public Page<Board> myPostList(HttpServletRequest request, @PageableDefault(size = 5, sort ="boardId", direction = Sort.Direction.DESC) Pageable pageable) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        return postService.myPostList(user.getUsername());
+        return postService.myBoardList(user.getUsername(), pageable);
     }
 
     @PostMapping("/post_insert")

@@ -7,6 +7,8 @@ import com.example.project.springbootproject.repository.BoardRepositoryImpl;
 import java.util.List;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -40,6 +42,14 @@ public class PostService {
 
     public List<Board> boardList() {
         return boardRepositoryImpl.boardList();
+    }
+
+    public Page<Board> myBoardList(String username, Pageable pageable) {
+        return boardRepositoryImpl.pagingMyBoardList(username, pageable);
+    }
+
+    public Page<Board> getBoardList(Pageable pageable) {
+        return boardRepositoryImpl.pagingBoardList(pageable);
     }
 
 }
