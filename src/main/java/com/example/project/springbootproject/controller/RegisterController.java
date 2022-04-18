@@ -31,14 +31,6 @@ public class RegisterController {
     @PostMapping("/usernameCheck")
     public boolean usernameCheck(@RequestParam("username") String username) {
         return userService.usernameCheck(username);
-//        User user = userRepository.findByUsername(username);
-////        model.addAttribute("username", user.getUsername());
-//        if(user == null) {
-//            return false;
-//        } else {
-//            return true;
-//        }
-////        return "register";
     }
 
 }
