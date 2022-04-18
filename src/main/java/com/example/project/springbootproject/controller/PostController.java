@@ -31,7 +31,7 @@ public class PostController {
     EntityManager em;
 
     @GetMapping("/postList")
-    public String postList(Model model, @PageableDefault(size = 5, sort ="boardId", direction = Sort.Direction.DESC)
+    public String postList(Model model, @PageableDefault(size = 10, sort ="boardId", direction = Sort.Direction.DESC)
         Pageable pageable, HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
@@ -130,7 +130,7 @@ public class PostController {
         List<Board> boardList = postService.boardList();
         model.addAttribute("userSession", user);
         model.addAttribute("boardList", boardList);
-        return "post";
+        return "redirect:/postList";
     }
 
 

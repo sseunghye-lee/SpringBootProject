@@ -95,5 +95,4 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
 
         return new PageImpl<>(boardList, pageable, total);
     }
-
 }
