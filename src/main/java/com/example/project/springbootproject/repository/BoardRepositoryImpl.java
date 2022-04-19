@@ -31,7 +31,7 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
     }
 
     @Transactional
-    public void deleteBoard(int boardId) {
+    public void deleteBoard(long boardId) {
         long delete = jpaQueryFactory.update(qBoard)
             .where(qBoard.boardId.eq(boardId))
             .set(qBoard.delete, 1)
@@ -39,7 +39,7 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
     }
 
     @Transactional
-    public void updateBoard(int boardId, String title, String content) {
+    public void updateBoard(long boardId, String title, String content) {
         long update = jpaQueryFactory.update(qBoard)
             .where(qBoard.boardId.eq(boardId))
             .set(qBoard.title, title)

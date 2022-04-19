@@ -24,7 +24,7 @@ public class PostService {
 
     }
 
-    public Board findBoard(int boardId) {
+    public Board findBoard(long boardId) {
         return boardRepository.findById(boardId);
     }
 
@@ -32,11 +32,11 @@ public class PostService {
         return boardRepository.findAllByUsername(username);
     }
 
-    public void deleteBoard(int boardId) {
+    public void deleteBoard(long boardId) {
         boardRepositoryImpl.deleteBoard(boardId);
     }
 
-    public void updateBoard(int boardId, String title, String content) {
+    public void updateBoard(long boardId, String title, String content) {
         boardRepositoryImpl.updateBoard(boardId, title, content);
     }
 
