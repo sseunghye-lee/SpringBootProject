@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByUsername(String username);
 
-    Board findById(long boardId);
+//    Board findById(long boardId);
 
 }

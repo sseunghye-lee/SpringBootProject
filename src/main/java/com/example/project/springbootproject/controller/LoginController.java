@@ -20,26 +20,27 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(String username, String password, HttpServletRequest request, Model model) {
-        User user = userService.login(username, password);
+        boolean loginValidation = userService.validationLogin(username, password);
+
+        if(loginValidation == false) {
+            return "redirect:/";
+        }
+        User user = userService.user(username);
 
         if(user == null) {
             return "redirect:/";
         }
-
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
 
-        model.addAttribute("userSession", user);
-
-        return "mainPage";
+        return "redirect:/mainPage";
     }
 
-    @RequestMapping("/logout")
+    @RequestMapping("/user/logout")
     public String logout(HttpServletRequest request)  {
         HttpSession session = request.getSession();
         session.invalidate();
 
         return "redirect:/";
     }
-
 }

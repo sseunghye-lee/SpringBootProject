@@ -37,4 +37,13 @@ public class Board {
         this.username = username;
         this.content = content;
     }
+
+    public void deleteBoard(){
+        this.delete = 1;
+    }
+
+    public void updateBoard(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

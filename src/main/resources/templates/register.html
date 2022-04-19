@@ -28,6 +28,10 @@
             let username = document.getElementById("username").value;
             let phone = document.getElementById("phone").value;
             let email = document.getElementById("email").value;
+            let emailRegExp = /^[A-Za-z0-9_]+[A-Za-z0-9]*[@]{1}[A-Za-z0-9]+[A-Za-z0-9]*[.]{1}[A-Za-z]{1,3}$/;
+            let password1RegExp = /^[a-zA-z0-9]{4,12}$/;
+            let phoneRegExp = /(01[0|1|6|9|7])[-](\d{3}|\d{4})[-](\d{4}$)/g;
+            let usernameCheckVal = $("#userCheck").val();
 
             if(username =='') {
                 alert("username을 입력해주세요");
@@ -37,8 +41,16 @@
                 alert("핸드폰번호를 입력해주세요");
                 return false;
             }
-            if(email =='') {
+            if(!phoneRegExp.test(phone)) {
+                alert("잘못된 핸드폰번호입니다");
+                return false;
+            }
+            if(email == '') {
                 alert("이메일을 입력해주세요");
+                return false;
+            }
+            if(!emailRegExp.test(email)) {
+                alert("이메일 형식이 올바르지 않습니다");
                 return false;
             }
             if(p1 =='') {
@@ -49,11 +61,19 @@
                 alert("비밀번호 확인을 입력해주세요");
                 return false;
             }
-
+            if(!password1RegExp.test(p1)) {
+                alert("비밀번호는 영문 대소문자와 숫자 4~12자리로 입력해야합니다");
+                return false;
+            }
             if(p1 != p2) {
                 alert("비밀번호가 일치하지 않습니다.");
                 return false;
-            } else {
+            }
+            if(usernameCheckVal == "N") {
+                alert("중복확인 버튼을 눌러주세요");
+                return false;
+            }
+            else {
                 register.type = "submit";
                 return true;
             }
@@ -62,6 +82,8 @@
     <script th:inline="javascript">
         function usernameCheck() {
             let username = document.getElementById("username").value;
+            let register = document.getElementById("register");
+            let usernameCheckVal = $("#userCheck").val();
 
             $.ajax({
                 url:'/usernameCheck',
@@ -71,10 +93,11 @@
                 success:function(data) {
                     if(data == true) {
                         alert("이미 있는 username입니다.");
+                        $("#userCheck").attr("value", "N");
                     } else if(data == false) {
                         alert("사용 가능한 username입니다.");
+                        $("#userCheck").attr("value", "Y");
                     }
-
                 }
             });
         }
@@ -103,7 +126,8 @@
                                             placeholder="Username">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="button" id="userCheck" class="btn btn-primary btn-user btn-block" value="중복확인" onclick="usernameCheck()">
+<!--                                        <input type="button" id="userCheck" class="btn btn-primary btn-user btn-block" value="중복확인" onclick="usernameCheck()">-->
+                                        <button class="btn btn-primary btn-user btn-block" id="userCheck" type="button" onclick="usernameCheck()" value="N">중복확인</button>
                                     </div>
                                 </div>
                                 <input type="text" class="form-control form-control-user" id="phone" name="phone"

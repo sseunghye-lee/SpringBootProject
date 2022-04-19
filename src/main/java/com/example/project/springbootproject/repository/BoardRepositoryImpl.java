@@ -30,42 +30,42 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    @Transactional
-    public void deleteBoard(long boardId) {
-        long delete = jpaQueryFactory.update(qBoard)
-            .where(qBoard.boardId.eq(boardId))
-            .set(qBoard.delete, 1)
-            .execute();
-    }
+//    @Transactional
+//    public void deleteBoard(long boardId) {
+//        long delete = jpaQueryFactory.update(qBoard)
+//            .where(qBoard.boardId.eq(boardId))
+//            .set(qBoard.delete, 1)
+//            .execute();
+//    }
+//
+//    @Transactional
+//    public void updateBoard(long boardId, String title, String content) {
+//        long update = jpaQueryFactory.update(qBoard)
+//            .where(qBoard.boardId.eq(boardId))
+//            .set(qBoard.title, title)
+//            .set(qBoard.content, content)
+//            .execute();
+//    }
 
-    @Transactional
-    public void updateBoard(long boardId, String title, String content) {
-        long update = jpaQueryFactory.update(qBoard)
-            .where(qBoard.boardId.eq(boardId))
-            .set(qBoard.title, title)
-            .set(qBoard.content, content)
-            .execute();
-    }
-
-    public List<Board> boardList() {
-        List<Board> boardList =
-            jpaQueryFactory
-            .selectFrom(qBoard)
-            .where(qBoard.delete.eq(0))
-            .orderBy(qBoard.boardId.desc())
-            .fetch();
-        return boardList;
-    }
-
-    public List<Board> myBoardList(String username) {
-        List<Board> myBoardList =
-            jpaQueryFactory
-                .selectFrom(qBoard)
-                .where(qBoard.username.eq(username))
-                .orderBy(qBoard.boardId.desc())
-                .fetch();
-        return myBoardList;
-    }
+//    public List<Board> boardList() {
+//        List<Board> boardList =
+//            jpaQueryFactory
+//            .selectFrom(qBoard)
+//            .where(qBoard.delete.eq(0))
+//            .orderBy(qBoard.boardId.desc())
+//            .fetch();
+//        return boardList;
+//    }
+//
+//    public List<Board> myBoardList(String username) {
+//        List<Board> myBoardList =
+//            jpaQueryFactory
+//                .selectFrom(qBoard)
+//                .where(qBoard.username.eq(username))
+//                .orderBy(qBoard.boardId.desc())
+//                .fetch();
+//        return myBoardList;
+//    }
 
     public Page<Board> pagingMyBoardList(String username, Pageable pageable) {
         QueryResults<Board> results = jpaQueryFactory

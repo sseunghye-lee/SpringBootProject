@@ -42,18 +42,18 @@ public class PostController {
         return "post";
     }
 
-    @GetMapping("/post")
-    public String post(Model model, HttpServletRequest request) {
-
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        session.setAttribute("user", user);
-        List<Board> boardList = postService.boardList();
-        model.addAttribute("userSession", user);
-        model.addAttribute("boardList", boardList);
-
-        return "post";
-    }
+//    @GetMapping("/post")
+//    public String post(Model model, HttpServletRequest request) {
+//
+//        HttpSession session = request.getSession();
+//        User user = (User) session.getAttribute("user");
+//        session.setAttribute("user", user);
+//        List<Board> boardList = postService.boardList();
+//        model.addAttribute("userSession", user);
+//        model.addAttribute("boardList", boardList);
+//
+//        return "post";
+//    }
 
     @GetMapping("/post_new")
     public String postNew(Model model, HttpServletRequest request) {
@@ -127,9 +127,8 @@ public class PostController {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         session.setAttribute("user", user);
-        List<Board> boardList = postService.boardList();
         model.addAttribute("userSession", user);
-        model.addAttribute("boardList", boardList);
+
         return "redirect:/postList";
     }
 
