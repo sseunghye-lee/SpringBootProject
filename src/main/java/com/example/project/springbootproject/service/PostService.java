@@ -2,6 +2,7 @@ package com.example.project.springbootproject.service;
 
 import com.example.project.springbootproject.domain.Board;
 import com.example.project.springbootproject.domain.BoardDTO;
+import com.example.project.springbootproject.exception.BoardException;
 import com.example.project.springbootproject.repository.BoardRepository;
 import com.example.project.springbootproject.repository.BoardRepositoryImpl;
 import java.util.List;
@@ -28,7 +29,7 @@ public class PostService {
 
     }
     public Board findBoard(long boardId) {
-        return boardRepository.findById(boardId).orElseThrow(() -> new EntityNotFoundException());
+        return boardRepository.findById(boardId).orElseThrow(() -> new BoardException("해당 게시글이 없습니다."));
     }
 
     @Transactional(readOnly = true)

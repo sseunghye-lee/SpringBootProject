@@ -95,8 +95,13 @@
                         alert("이미 있는 username입니다.");
                         $("#userCheck").attr("value", "N");
                     } else if(data == false) {
-                        alert("사용 가능한 username입니다.");
-                        $("#userCheck").attr("value", "Y");
+                        if(username =='') {
+                            alert("username을 입력해주세요");
+                            $("#userCheck").attr("value", "N");
+                        } else {
+                            alert("사용 가능한 username입니다.");
+                            $("#userCheck").attr("value", "Y");
+                        }
                     }
                 }
             });
@@ -129,6 +134,9 @@
 <!--                                        <input type="button" id="userCheck" class="btn btn-primary btn-user btn-block" value="중복확인" onclick="usernameCheck()">-->
                                         <button class="btn btn-primary btn-user btn-block" id="userCheck" type="button" onclick="usernameCheck()" value="N">중복확인</button>
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <div style="color:red" th:if = "${insertError != null}" th:text="${insertError}"/>
                                 </div>
                                 <input type="text" class="form-control form-control-user" id="phone" name="phone"
                                        placeholder="Phone">

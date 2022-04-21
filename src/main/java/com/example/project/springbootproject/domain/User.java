@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,5 +37,9 @@ public class User {
         this.password = password;
         this.email = email;
         this.phone = phone;
+    }
+
+    public void login(HttpSession session) {
+        session.setAttribute("user", new UserDTO(this.username, null, this.email, this.phone));
     }
 }

@@ -21,6 +21,7 @@
             let title = document.getElementById('title').value;
             let content = document.getElementById('content').value;
             let submitButton = document.getElementById('submitButton');
+            let referer = document.getElementById('updateReferer').value;
 
             if(title =='') {
                 alert("title을 입력해주세요");
@@ -28,9 +29,23 @@
             } else if(content =='') {
                 alert("content를 입력해주세요");
                 return false;
-            } else {
+            } else if(referer == '') {
+                alert("정상적인 경로를 통해 접근해주세요");
+                location.href="/my_post";
+            }
+            else {
                 submitButton.type = "submit";
                 return true;
+            }
+        }
+    </script>
+
+    <script th:inline="javascript">
+       window.onload = function() {
+            let referer = "${updateReferer}";
+            if('${updateReferer}' == null) {
+                alert("정상적인 경로를 통해 접근해주세요");
+                location.href="/my_post";
             }
         }
     </script>
@@ -54,6 +69,7 @@
                     <div class="form-floating mb-3">
                         <input class="form-control" id="name" type="text" th:value="${myBoard.username}"  placeholder="Enter your name..." data-sb-validations="required" />
                         <label for="name">Username</label>
+                        <input type="hidden" id="updateReferer" name="updateReferer" th:value="${updateReferer}">
                     </div>
                     <!-- Email address input-->
                     <div class="form-floating mb-3">
@@ -67,7 +83,7 @@
                         <label for="content">Content</label>
                     </div>
                     <input type="button" class="btn btn-primary btn-xl" value="수정" id="submitButton" onclick="updatePost()"></input>
-                    <a th:href="@{/my_post}" class="btn btn-primary btn-xl" id="cancelButton">취소</a>
+                    <a th:href="@{${updateReferer}}" class="btn btn-primary btn-xl" id="cancelButton">취소</a>
                 </form>
             </div>
         </div>

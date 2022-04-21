@@ -43,7 +43,8 @@
                         <textarea class="form-control" id="content" type="text" th:text="${board.content}" style="height: 10rem" data-sb-validations="required"></textarea>
                         <label for="content">Content</label>
                     </div>
-                    <a th:href="@{/postList}" class="btn btn-primary btn-xl" id="exitButton">목록으로</a>
+<!--                    <a th:href="@{/postList}" class="btn btn-primary btn-xl" id="exitButton">목록으로</a>-->
+                    <a th:href="@{${backPage}}" class="btn btn-primary btn-xl" id="exitButton">목록으로</a>
                 </form>
             </div>
         </div>

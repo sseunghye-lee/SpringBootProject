@@ -53,7 +53,7 @@
                 <form id="postForm" method="post" th:action="@{/post_insert}"  data-sb-form-api-token="API_TOKEN">
                     <!-- Name input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="username" name="username" type="text" th:value="${userSession.getUsername()}" placeholder="Enter your name..." data-sb-validations="required" />
+                        <input class="form-control" id="username" name="username" type="text" th:value="${userSession.getUsername()}" placeholder="Enter your name..." data-sb-validations="required" readonly />
                         <label for="username">Username</label>
                     </div>
 

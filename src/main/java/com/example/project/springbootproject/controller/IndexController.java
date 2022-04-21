@@ -1,6 +1,7 @@
 package com.example.project.springbootproject.controller;
 
 import com.example.project.springbootproject.domain.User;
+import com.example.project.springbootproject.domain.UserDTO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,7 @@ public class IndexController {
     @GetMapping("/mainPage")
     public String mainPage(Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        UserDTO user = (UserDTO) session.getAttribute("user");
         session.setAttribute("user", user);
         model.addAttribute("userSession", user);
         return "mainPage";
