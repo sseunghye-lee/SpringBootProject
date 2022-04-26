@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class PostService {
+    @Autowired
     private final BoardRepository boardRepository;
+    @Autowired
     private final BoardRepositoryImpl boardRepositoryImpl;
 
     public void insertPost(BoardDTO boardDTO) {
@@ -40,18 +43,12 @@ public class PostService {
     public void deleteBoard(long boardId) {
         Board board = this.findBoard(boardId);
         board.deleteBoard();
-//        boardRepositoryImpl.deleteBoard(boardId);
     }
 
     public void updateBoard(long boardId, String title, String content) {
         Board board = this.findBoard(boardId);
         board.updateBoard(title, content);
-//        boardRepositoryImpl.updateBoard(boardId, title, content);
     }
-
-//    public List<Board> boardList() {
-//        return boardRepositoryImpl.boardList();
-//    }
 
     public Page<Board> myBoardList(String username, Pageable pageable) {
         return boardRepositoryImpl.pagingMyBoardList(username, pageable);

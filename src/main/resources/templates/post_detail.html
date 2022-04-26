@@ -14,7 +14,36 @@
     <link th:href="@{https://fonts.googleapis.com/css?family=Montserrat:400,700}" rel="stylesheet" type="text/css" />
     <link th:href="@{https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic}" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link th:href="@{bootstrap/css/styles.css}" rel="stylesheet" />
+    <link th:href="@{/bootstrap/css/styles.css}" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            const boardId = document.getElementById("boardId").value;
+
+                $.ajax({
+                    url: '/detail/' + boardId,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    data: {"boardId": boardId},
+                    error: function(e){
+                        console.log(e)
+                        alert("해당 게시글이 없습니다");
+                        location.href="/post/list";
+                    },
+                    success: function (data) {
+
+                        $('#name').val(data.username);
+                        $('#title').val(data.title);
+                        $('#content').val(data.content);
+                    }
+                });
+
+        });
+    </script>
 </head>
 <body id="page-top">
 <section class="page-section" id="contact">
@@ -32,19 +61,19 @@
             <div class="col-lg-8 col-xl-7">
                 <form id="contactForm" data-sb-form-api-token="API_TOKEN">
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="name" type="text" th:value="${board.username}" data-sb-validations="required" />
+                        <input type="hidden" id="boardId" name="boardId" th:value="${boardId}">
+                        <input class="form-control" id="name" type="text" data-sb-validations="required" readonly />
                         <label for="name">Username</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="title" type="text" th:value="${board.title}" data-sb-validations="required,email" />
+                        <input class="form-control" id="title" type="text" data-sb-validations="required,email" readonly />
                         <label for="title">Title</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" id="content" type="text" th:text="${board.content}" style="height: 10rem" data-sb-validations="required"></textarea>
+                        <textarea class="form-control" id="content" type="text" style="height: 10rem" data-sb-validations="required" readonly></textarea>
                         <label for="content">Content</label>
                     </div>
-<!--                    <a th:href="@{/postList}" class="btn btn-primary btn-xl" id="exitButton">목록으로</a>-->
-                    <a th:href="@{${backPage}}" class="btn btn-primary btn-xl" id="exitButton">목록으로</a>
+                    <a th:href="@{/post/list}" class="btn btn-primary btn-xl" id="exitButton">목록으로</a>
                 </form>
             </div>
         </div>
@@ -53,7 +82,7 @@
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS-->
-<script src="bootstrap/js/scripts.js"></script>
+<script src="/bootstrap/js/scripts.js"></script>
 <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
 </body>
 </html>

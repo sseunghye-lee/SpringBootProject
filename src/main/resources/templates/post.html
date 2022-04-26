@@ -5,16 +5,86 @@
     <title>게시판</title>
 
     <!-- Custom fonts for this template -->
-    <link th:href="@{bootstrap/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/bootstrap/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link
         th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
         rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link th:href="@{bootstrap/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sb-admin-2.min.css}" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link th:href="@{bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function(){
+           pageList();
+        })
+
+        function pageList() {
+            $.ajax({
+                url:'/post-list?page=' + $("#page").val(),
+                type:'GET',
+                dataType:'JSON',
+                success:function(data) {
+                    const postList = data.response.content;
+                    const tbody = $("#postBody")[0];
+
+                    while ( tbody.hasChildNodes() ) {
+                        tbody.removeChild( tbody.firstChild );
+                    }
+                    for(const idx in postList) {
+                        const post = postList[idx]
+
+                        const newRow = tbody.insertRow()
+                        const cell1 = newRow.insertCell()
+                        cell1.append(post.title)
+
+                        const cell2 = newRow.insertCell()
+                        cell2.append(post.username)
+
+                        const cell3 = newRow.insertCell()
+                        const postLink = document.createElement("a")
+                        const link = `/post_detail?boardId=${post.boardId}`
+                        postLink.setAttribute("href", link)
+                        postLink.append('보기')
+                        cell3.append(postLink)
+
+                        console.log(data)
+                    }
+
+                    console.log(data.response)
+                    const totalPage = data.response.totalPages
+                    const page = $("#paging")[0]
+
+                    while ( page.hasChildNodes() ) {
+                        page.removeChild( page.firstChild );
+                    }
+
+                    for(let i = 0; i < totalPage; i++) {
+                        const li = document.createElement("li")
+                        const a = document.createElement("a")
+                        const link = '#'
+                        // const link = '/post/list?page=' + i
+                        a.setAttribute("href", link)
+                        a.append(i+1)
+                        a.onclick = function () {
+                            $("#page").val(i)
+                            pageList()
+                        }
+
+                        li.append(a)
+                        page.append(li)
+
+                    }
+                }
+            })
+        }
+    </script>
 
     <style>
       ul {
@@ -34,12 +104,17 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h5 class="m-0 font-weight-bold text-primary">게시판</h5>
-        <a th:href="@{/post_new}" class="btn btn-primary btn-user btn-block">
-            게시글 작성
-        </a>
+        <th:block th:if="${userSession != null}">
+            <a th:href="@{/post_new}" class="btn btn-primary btn-user btn-block">
+                게시글 작성
+            </a>
+        </th:block>
+
         <a th:href="@{/mainPage}" class="btn btn-primary btn-user btn-block">
             메인페이지로
         </a>
+
+        <input type="hidden" id="page" th:value="${page}">
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -51,20 +126,15 @@
                     <th>상세보기</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="post : ${boardList}">
-                    <td th:text="${post.title}">Tiger Nixon</td>
-                    <td th:text="${post.username}">System Architect</td>
-                    <td><a th:href="@{/post_detail(boardId = ${post.boardId})}">보기</a></td>
-                </tr>
+                <tbody id="postBody">
                 </tbody>
             </table>
 
-            <ul>
-                <li th:if="${boardList.getTotalPages() == 0}">게시글이 없습니다</li>
-                <li th:if="${boardList.getTotalPages() > 0}" th:each="page : ${#numbers.sequence(0, boardList.getTotalPages() - 1)}">
-                    <a th:text="${page+1}" th:href="@{/postList(page=${page})}"></a>
-                </li>
+            <ul id="paging">
+<!--                <li th:if="${boardList.getTotalPages() == 0}">게시글이 없습니다</li>-->
+<!--                <li th:if="${boardList.getTotalPages() > 0}" th:each="page : ${#numbers.sequence(0, boardList.getTotalPages() - 1)}">-->
+<!--                    <a th:text="${page+1}" th:href="@{/post-list(page=${page})}"></a>-->
+<!--                </li>-->
             </ul>
 
         </div>
@@ -74,18 +144,18 @@
 </div>
 
 <!-- Bootstrap core JavaScript-->
-<script src="bootstrap/vendor/jquery/jquery.min.js"></script>
-<script src="bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/bootstrap/vendor/jquery/jquery.min.js"></script>
+<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Core plugin JavaScript-->
-<script src="bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="bootstrap/js/sb-admin-2.min.js"></script>
+<script src="/bootstrap/js/sb-admin-2.min.js"></script>
 
 <!-- Page level plugins -->
-<script src="bootstrap/vendor/datatables/jquery.dataTables.min.js"></script>
-<script src="bootstrap/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/bootstrap/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/bootstrap/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
 </body>
 </html>

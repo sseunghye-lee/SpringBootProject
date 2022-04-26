@@ -28,8 +28,6 @@ public class UserService {
         } else {
             userRepository.save(user);
         }
-
-//        userRepository.insertUser(user).orElseThrow(() -> new InsertUserException("등록할 수 없는 사용자입니다."));
     }
 
     public User login(String username, String password) {

@@ -14,14 +14,19 @@
     <link th:href="@{https://fonts.googleapis.com/css?family=Montserrat:400,700}" rel="stylesheet" type="text/css" />
     <link th:href="@{https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic}" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link th:href="@{bootstrap/css/styles.css}" rel="stylesheet" />
+    <link th:href="@{/bootstrap/css/styles.css}" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script th:inline="javascript">
-        function updatePost(boardId) {
+        function updatePost() {
             let title = document.getElementById('title').value;
             let content = document.getElementById('content').value;
             let submitButton = document.getElementById('submitButton');
             let referer = document.getElementById('updateReferer').value;
+            let boardId = document.getElementById('boardId').value;
 
             if(title =='') {
                 alert("title을 입력해주세요");
@@ -31,23 +36,55 @@
                 return false;
             } else if(referer == '') {
                 alert("정상적인 경로를 통해 접근해주세요");
-                location.href="/my_post";
+                location.href="/my/post";
             }
             else {
-                submitButton.type = "submit";
+                $.ajax({
+                    url:"/update/" + boardId + "/" + title + "/" + content,
+                    type:'PUT',
+                    dataType:'JSON',
+                    contentType: 'application/json; charset=utf-8',
+                    data:JSON.stringify({"boardId": boardId, "title":title, "content":content}),
+                    error: function(e){
+                        console.log(e)
+                    },
+                    success:function(r) {
+                        alert("수정완료");
+                        location.href="/my/post";
+                    }
+                })
+                // submitButton.type = "submit";
+                // updateForm.action="/update/" + boardId + "/" + title + "/" + content;
                 return true;
             }
         }
     </script>
 
     <script th:inline="javascript">
-       window.onload = function() {
-            let referer = "${updateReferer}";
-            if('${updateReferer}' == null) {
-                alert("정상적인 경로를 통해 접근해주세요");
-                location.href="/my_post";
-            }
-        }
+        $(document).ready(function(){
+            let boardId = document.getElementById('boardId').value;
+            $.ajax({
+                url:'/post/update/' + boardId,
+                type:'GET',
+                dataType:'JSON',
+                data:{"boardId":boardId},
+                error: function(e) {
+                    console.log(e);
+                    alert("해당 게시글이 없습니다");
+                    location.href="my/post";
+                },
+                success:function(data) {
+                    document.getElementById('name').value = data.username;
+                    $('#title').val(data.title);
+                    $('#content').val(data.content);
+
+                    // $('#name').val(data.username)
+                    // $('input[name=username]').val(data.username)
+                    // let usernameHtml = "<input class='form-control' id='name' type='text' value='" + data.username + "' data-sb-validations='required' readonly />"
+                    // $("#nameAppend").append(usernamenameHtml);
+                }
+            });
+        });
     </script>
 </head>
 <body id="page-top">
@@ -63,27 +100,27 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8 col-xl-7">
-                <form id="updateForm" method="post" th:action="@{/updatePost}" data-sb-form-api-token="API_TOKEN">
-                    <input type="hidden" id="boardId" name="boardId" th:value="${myBoard.boardId}">
+                <form id="updateForm" method="post" data-sb-form-api-token="API_TOKEN">
+                    <input type="hidden" id="boardId" name="boardId" th:value="${myBoard}">
                     <!-- Name input-->
-                    <div class="form-floating mb-3">
-                        <input class="form-control" id="name" type="text" th:value="${myBoard.username}"  placeholder="Enter your name..." data-sb-validations="required" />
+                    <div class="form-floating mb-3" id="nameAppend">
+                        <input class="form-control" id="name" name="username" type="text"  placeholder="Enter your name..." data-sb-validations="required" readonly />
                         <label for="name">Username</label>
                         <input type="hidden" id="updateReferer" name="updateReferer" th:value="${updateReferer}">
                     </div>
                     <!-- Email address input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="title" name="title" type="text" th:value="${myBoard.title}" placeholder="name@example.com" data-sb-validations="required" />
+                        <input class="form-control" id="title" name="title" type="text" placeholder="name@example.com" data-sb-validations="required" />
                         <label for="title">Title</label>
                     </div>
                     <!-- Message input-->
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" id="content" name="content" type="text" th:text="${myBoard.content}" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required">
+                        <textarea class="form-control" id="content" name="content" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required">
                         </textarea>
                         <label for="content">Content</label>
                     </div>
-                    <input type="button" class="btn btn-primary btn-xl" value="수정" id="submitButton" onclick="updatePost()"></input>
-                    <a th:href="@{${updateReferer}}" class="btn btn-primary btn-xl" id="cancelButton">취소</a>
+                    <input type="button" class="btn btn-primary btn-xl" value="수정" id="submitButton" onclick="updatePost()">
+                    <a th:href="@{/my/post}" class="btn btn-primary btn-xl" id="cancelButton">취소</a>
                 </form>
             </div>
         </div>
@@ -92,7 +129,7 @@
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS-->
-<script src="bootstrap/js/scripts.js"></script>
+<script src="/bootstrap/js/scripts.js"></script>
 <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
 </body>
 </html>

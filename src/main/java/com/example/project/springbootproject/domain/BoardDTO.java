@@ -9,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BoardDTO {
 
+    private long boardId;
     private String title;
     private String content;
     private String username;

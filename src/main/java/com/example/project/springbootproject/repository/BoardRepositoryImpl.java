@@ -30,68 +30,37 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-//    @Transactional
-//    public void deleteBoard(long boardId) {
-//        long delete = jpaQueryFactory.update(qBoard)
-//            .where(qBoard.boardId.eq(boardId))
-//            .set(qBoard.delete, 1)
-//            .execute();
-//    }
-//
-//    @Transactional
-//    public void updateBoard(long boardId, String title, String content) {
-//        long update = jpaQueryFactory.update(qBoard)
-//            .where(qBoard.boardId.eq(boardId))
-//            .set(qBoard.title, title)
-//            .set(qBoard.content, content)
-//            .execute();
-//    }
-
-//    public List<Board> boardList() {
-//        List<Board> boardList =
-//            jpaQueryFactory
-//            .selectFrom(qBoard)
-//            .where(qBoard.delete.eq(0))
-//            .orderBy(qBoard.boardId.desc())
-//            .fetch();
-//        return boardList;
-//    }
-//
-//    public List<Board> myBoardList(String username) {
-//        List<Board> myBoardList =
-//            jpaQueryFactory
-//                .selectFrom(qBoard)
-//                .where(qBoard.username.eq(username))
-//                .orderBy(qBoard.boardId.desc())
-//                .fetch();
-//        return myBoardList;
-//    }
-
     public Page<Board> pagingMyBoardList(String username, Pageable pageable) {
-        QueryResults<Board> results = jpaQueryFactory
+        List<Board> myBoardList = jpaQueryFactory
             .selectFrom(qBoard)
             .where(qBoard.username.eq(username))
             .orderBy(qBoard.boardId.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .fetchResults();
+            .fetch();
 
-        List<Board> myBoardList = results.getResults();
-        long total = results.getTotal();
+        long total = jpaQueryFactory.select(qBoard.count())
+            .from(qBoard)
+            .where(qBoard.username.eq(username))
+            .orderBy(qBoard.boardId.desc())
+            .fetchOne();
 
         return new PageImpl<>(myBoardList, pageable, total);
     }
 
     public Page<Board> pagingBoardList(Pageable pageable) {
-        QueryResults<Board> results = jpaQueryFactory
-                .selectFrom(qBoard)
+        List<Board> boardList = jpaQueryFactory.selectFrom(qBoard)
                 .where(qBoard.delete.eq(0))
                 .orderBy(qBoard.boardId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
-        List<Board> boardList = results.getResults();
-        long total = results.getTotal();
+                .fetch();
+
+        long total = jpaQueryFactory.select(qBoard.count())
+                .from(qBoard)
+                .where(qBoard.delete.eq(0))
+                .orderBy(qBoard.boardId.desc())
+                .fetchOne();
 
         return new PageImpl<>(boardList, pageable, total);
     }

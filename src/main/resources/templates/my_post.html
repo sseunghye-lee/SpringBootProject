@@ -5,21 +5,128 @@
     <title>내 게시글</title>
 
     <!-- Custom fonts for this template -->
-    <link th:href="@{bootstrap/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/bootstrap/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link
         th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
         rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link th:href="@{bootstrap/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sb-admin-2.min.css}" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link th:href="@{bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            pageList()
+        })
+
+        function pageList() {
+            $.ajax({
+                url:'/my-post?page=' + $("#page").val(),
+                type:'GET',
+                dataType:'JSON',
+                error:function() {
+                  alert("로그인이 필요합니다");
+                  location.href="/";
+                },
+                success:function(data) {
+                    const postList = data.response.content;
+                    const tbody = $("#postBody")[0]
+
+                    while ( tbody.hasChildNodes() ) {
+                        tbody.removeChild( tbody.firstChild );
+                    }
+
+                    if(postList.length==0) {
+                        pageBoard.append("게시글이 없습니다")
+                    }
+                    for(const idx in postList){
+                        const post = postList[idx]
+
+                        const newRow = tbody.insertRow()
+                        const cell1 = newRow.insertCell()
+                        cell1.append(post.title)
+
+                        const cell2 = newRow.insertCell()
+                        if(post.delete == 0) {
+                            const btn_delete = document.createElement("button");
+                            btn_delete.innerText = "삭제하기";
+                            btn_delete.onclick = function() {
+                                boardDelete(post.boardId);
+                            }
+                            cell2.append(btn_delete)
+                        } else {
+                            cell2.append("삭제된 게시글");
+                        }
+                        const cell3 = newRow.insertCell()
+                        const postLink = document.createElement("a");
+                        const link1 = `/post_update?boardId=${post.boardId}`
+                        // const link2 = '/post_update?boardId='+post.boardId
+                        // const link3 = "/post_update?boardId="+post.boardId
+                        postLink.setAttribute("href", link1)
+                        postLink.append('보기')
+                        cell3.append(postLink)
+
+                        console.log(post);
+
+                    }
+
+                    const totalPage = data.response.totalPages
+                    const page = $("#paging")[0]
+
+                    while ( page.hasChildNodes() ) {
+                        page.removeChild( page.firstChild );
+                    }
+
+                    for(let i = 0; i < totalPage; i++) {
+                        const li = document.createElement("li")
+                        const a = document.createElement("a")
+                        const link = '#'
+                        // const link = '/post/list?page=' + i
+                        a.setAttribute("href", link)
+                        a.append(i+1)
+                        a.onclick = function () {
+                            $("#page").val(i)
+                            pageList()
+                        }
+
+                        li.append(a)
+                        page.append(li)
+
+                    }
+
+                }
+            })
+        }
+    </script>
 
     <script th:inline="javascript">
         function deletePost(boardId) {
             location.href="/post_delete?boardId=" + boardId;
             location.reload();
+        }
+    </script>
+
+    <script th:inline="javascript">
+        function boardDelete(boardId) {
+            $.ajax({
+                url:'/post/delete/' + boardId,
+                type:'DELETE',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data:JSON.stringify({"boardId":boardId}),
+                error: function(e){
+                    console.log(e)
+                },
+                success: function(r){
+                    location.reload();
+                }
+            })
         }
     </script>
 
@@ -43,6 +150,8 @@
         <a th:href="@{/mainPage}" class="btn btn-primary btn-user btn-block">
             메인페이지로
         </a>
+
+        <input type="hidden" id="page" th:value="${page}">
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -54,24 +163,14 @@
                     <th>상세보기</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="post : ${myPostList}">
-                    <td th:text="${post.title}"></td>
-                    <th:block th:if="${post.delete == 0}">
-                        <td><a th:href="@{/post_delete(boardId = ${post.boardId})}">삭제하기</a></td>
-                    </th:block>
-                    <th:block th:if="${post.delete == 1}">
-                        <td>삭제된 게시글</td>
-                    </th:block>
-                    <td><a th:href="@{/post_update(boardId = ${post.boardId})}">보기</a></td>
-                </tr>
+                <tbody id="postBody">
                 </tbody>
             </table>
-                <ul>
-                    <li th:if="${myPostList.getTotalPages() == 0}">게시글이 없습니다</li>
-                    <li th:if="${myPostList.getTotalPages() > 0}" th:each="page : ${#numbers.sequence(0, myPostList.getTotalPages() - 1)}">
-                        <a th:text="${page+1}" th:href="@{/my_post(page=${page})}"></a>
-                    </li>
+                <ul id="paging">
+<!--                    <li th:if="${myPostList.getTotalPages() == 0}">게시글이 없습니다</li>-->
+<!--                    <li th:if="${myPostList.getTotalPages() > 0}" th:each="page : ${#numbers.sequence(0, myPostList.getTotalPages() - 1)}">-->
+<!--                        <a th:text="${page+1}" th:href="@{/my/post(page=${page})}"></a>-->
+<!--                    </li>-->
                 </ul>
 
         </div>
@@ -81,18 +180,18 @@
 </div>
 
 <!-- Bootstrap core JavaScript-->
-<script src="bootstrap/vendor/jquery/jquery.min.js"></script>
-<script src="bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/bootstrap/vendor/jquery/jquery.min.js"></script>
+<script src="/bootstrap/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Core plugin JavaScript-->
-<script src="bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/bootstrap/vendor/jquery-easing/jquery.easing.min.js"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="bootstrap/js/sb-admin-2.min.js"></script>
+<script src="/bootstrap/js/sb-admin-2.min.js"></script>
 
 <!-- Page level plugins -->
-<script src="bootstrap/vendor/datatables/jquery.dataTables.min.js"></script>
-<script src="bootstrap/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/bootstrap/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/bootstrap/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
 </body>
 </html>
