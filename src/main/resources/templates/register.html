@@ -78,6 +78,10 @@
                 return true;
             }
         }
+        function onKeyDown() {
+            let usernameCheckVal = $("#userCheck").val();
+            $("#userCheck").attr("value", "N");
+        }
     </script>
     <script th:inline="javascript">
         function usernameCheck() {
@@ -90,6 +94,11 @@
                 type:'POST',
                 dataType:"JSON",
                 data:{"username":username},
+                error:function(e) {
+                  console.log(e)
+                  alert("회원가입 실패")
+                  location.href="/"
+                },
                 success:function(data) {
                     if(data == true) {
                         alert("이미 있는 username입니다.");
@@ -128,7 +137,7 @@
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="text" class="form-control form-control-user" id="username" name="username"
-                                            placeholder="Username">
+                                            placeholder="Username" onkeydown="onKeyDown()">
                                     </div>
                                     <div class="col-sm-6">
 <!--                                        <input type="button" id="userCheck" class="btn btn-primary btn-user btn-block" value="중복확인" onclick="usernameCheck()">-->

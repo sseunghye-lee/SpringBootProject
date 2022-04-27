@@ -121,7 +121,9 @@
                 contentType: 'application/json; charset=utf-8',
                 data:JSON.stringify({"boardId":boardId}),
                 error: function(e){
+                    alert("삭제를 실패했습니다")
                     console.log(e)
+                    location.href="/my/post"
                 },
                 success: function(r){
                     location.reload();

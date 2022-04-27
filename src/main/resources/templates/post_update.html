@@ -47,6 +47,8 @@
                     data:JSON.stringify({"boardId": boardId, "title":title, "content":content}),
                     error: function(e){
                         console.log(e)
+                        alert("수정 실패")
+                        location.href="/my/post"
                     },
                     success:function(r) {
                         alert("수정완료");

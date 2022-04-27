@@ -30,6 +30,11 @@
                 url:'/post-list?page=' + $("#page").val(),
                 type:'GET',
                 dataType:'JSON',
+                error:function(e) {
+                    console.log(e)
+                    alert("리스트를 불러오지 못했습니다")
+                    location.href="/mainPage"
+                },
                 success:function(data) {
                     const postList = data.response.content;
                     const tbody = $("#postBody")[0];

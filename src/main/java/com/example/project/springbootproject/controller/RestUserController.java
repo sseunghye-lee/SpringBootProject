@@ -39,9 +39,9 @@ public class RestUserController {
     }
 
     @PostMapping("/register")
-    public ModelAndView insertUser(UserDTO user) {
+    public void insertUser(UserDTO user, HttpServletResponse response) throws IOException {
         userService.insertUser(user);
-        return new ModelAndView("login");
+        response.sendRedirect("/");
     }
 
     @ResponseBody
