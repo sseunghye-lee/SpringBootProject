@@ -1,16 +1,19 @@
 package com.example.project.springbootproject.domain;
 
+import com.example.project.springbootproject.domain.BoardDTO.InsertDto;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Board {
@@ -36,6 +39,13 @@ public class Board {
         this.title = title;
         this.username = username;
         this.content = content;
+    }
+
+    public static Board insert(InsertDto insertDto){
+        return Board.builder().title(insertDto.getTitle())
+            .username(insertDto.getUsername())
+            .content(insertDto.getContent())
+            .build();
     }
 
     public void deleteBoard(){

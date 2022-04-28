@@ -16,11 +16,16 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link th:href="@{/bootstrap/css/styles.css}" rel="stylesheet" />
 
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <script th:inline="javascript">
         function insertPost() {
-            let title = document.getElementById('title').value;
-            let content = document.getElementById('content').value;
-            let submitButton = document.getElementById('submitButton');
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const submitButton = document.getElementById('submitButton');
+            const username = document.getElementById('username').value;
 
             if(title =='') {
                 alert("title을 입력해주세요");
@@ -29,7 +34,25 @@
                 alert("content를 입력해주세요");
                 return false;
             } else {
-                submitButton.type = "submit";
+                // submitButton.type = "submit";
+                // return true;
+
+                $.ajax({
+                    url:"/post/insert",
+                    type: "POST",
+                    dataType:'JSON',
+                    contentType: 'application/json; charset=utf-8',
+                    data:JSON.stringify({"username": username, "title":title, "content":content}),
+                    error: function(e) {
+                        console.log(e)
+                        alert("게시글 등록 실패")
+                        location.href="/post/list"
+                    },
+                    success:function() {
+                        alert("게시글 등록 완료")
+                        location.href="/post/list"
+                    }
+                })
                 return true;
             }
 
@@ -50,7 +73,7 @@
         <!-- Contact Section Form-->
         <div class="row justify-content-center">
             <div class="col-lg-8 col-xl-7">
-                <form id="postForm" method="post" th:action="@{/post/insert}"  data-sb-form-api-token="API_TOKEN">
+                <form th:method="post" id="postForm" data-sb-form-api-token="API_TOKEN">
                     <!-- Name input-->
                     <div class="form-floating mb-3">
                         <input class="form-control" id="username" name="username" type="text" th:value="${userSession.getUsername()}" placeholder="Enter your name..." data-sb-validations="required" readonly />

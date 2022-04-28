@@ -4,6 +4,7 @@ import static com.example.project.springbootproject.util.ApiUtils.success;
 
 import com.example.project.springbootproject.domain.Board;
 import com.example.project.springbootproject.domain.BoardDTO;
+import com.example.project.springbootproject.domain.BoardDTO.InsertDto;
 import com.example.project.springbootproject.domain.UserDTO;
 import com.example.project.springbootproject.exception.BoardException;
 import com.example.project.springbootproject.exception.MyPostException;
@@ -113,7 +114,7 @@ public class RestPostController {
     }
 
     @GetMapping("/my-post")
-    public ApiResult<Page<Board>> myBoardList(Model model, HttpServletRequest request, @PageableDefault(size = 5, sort ="boardId", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ApiResult<Page<Board>> myBoardList(Model model, HttpServletRequest request, @PageableDefault(size = 10, sort ="boardId", direction = Sort.Direction.DESC) Pageable pageable) {
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
         model.addAttribute("userSession", user);
@@ -129,15 +130,25 @@ public class RestPostController {
         return success("DELETE OK");
     }
 
+//    @PostMapping("/post/insert")
+//    public void postInsert(BoardDTO boardDTO, Model model, HttpServletRequest request, HttpServletResponse response)
+//        throws IOException {
+//        postService.insertPost(boardDTO);
+//        HttpSession session = request.getSession();
+//        UserDTO user = (UserDTO) session.getAttribute("user");
+//        model.addAttribute("userSession", user);
+//
+//        response.sendRedirect("/post/list");
+//    }
+
     @PostMapping("/post/insert")
-    public void postInsert(BoardDTO boardDTO, Model model, HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
-        postService.insertPost(boardDTO);
+    public ApiResult<String> postInsert(@RequestBody InsertDto insertDto, HttpServletRequest request, Model model) {
+        postService.insertPost(insertDto);
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
         model.addAttribute("userSession", user);
 
-        response.sendRedirect("/post/list");
+        return success("INSERT OK");
     }
 
     @RequestMapping("/backPage")

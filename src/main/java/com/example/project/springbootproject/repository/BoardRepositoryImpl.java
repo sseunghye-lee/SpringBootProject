@@ -58,7 +58,6 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
         long total = jpaQueryFactory.select(qBoard.count())
                 .from(qBoard)
                 .where(qBoard.delete.eq(0))
-                .orderBy(qBoard.boardId.desc())
                 .fetchOne();
 
         return new PageImpl<>(boardList, pageable, total);

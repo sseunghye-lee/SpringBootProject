@@ -26,8 +26,19 @@
         })
 
         function pageList() {
+
+            let cPage = $("#page").val()
+            let hash = location.hash
+            hash.replace('#', '')
+            if(hash.length > 0 && hash.indexOf('page') > -1){
+                const pageArr = hash.split('=')
+                cPage = pageArr[1]
+                $("#page").val(cPage)
+                location.hash = '#'
+            }
+
             $.ajax({
-                url:'/my-post?page=' + $("#page").val(),
+                url:'/my-post?page=' + cPage,
                 type:'GET',
                 dataType:'JSON',
                 error:function() {
@@ -35,6 +46,7 @@
                   location.href="/";
                 },
                 success:function(data) {
+                    console.log(data)
                     const postList = data.response.content;
                     const tbody = $("#postBody")[0]
 
@@ -49,6 +61,10 @@
                         const post = postList[idx]
 
                         const newRow = tbody.insertRow()
+
+                        const cell = newRow.insertCell()
+                        cell.append(post.boardId)
+
                         const cell1 = newRow.insertCell()
                         cell1.append(post.title)
 
@@ -68,30 +84,74 @@
                         const link1 = `/post_update?boardId=${post.boardId}`
                         // const link2 = '/post_update?boardId='+post.boardId
                         // const link3 = "/post_update?boardId="+post.boardId
-                        postLink.setAttribute("href", link1)
+                        postLink.setAttribute("href", `#page=${$("#page").val()}`)
                         postLink.append('보기')
+                        postLink.onclick = function(){
+                            location.href = link1
+                        }
                         cell3.append(postLink)
 
                         console.log(post);
 
                     }
 
-                    const totalPage = data.response.totalPages
+                    const totalPages = data.response.totalPages
+                    // const pageSize = data.response.pageable.pageSize
+                    const pageLimit = 5
+                    const currentPage = data.response.pageable.pageNumber + 1
                     const page = $("#paging")[0]
 
                     while ( page.hasChildNodes() ) {
                         page.removeChild( page.firstChild );
                     }
 
-                    for(let i = 0; i < totalPage; i++) {
+                    // 페이징 처리 추가
+                    let startPage = parseInt((currentPage - 1) / pageLimit) * pageLimit + 1;
+                    let endPage = startPage + pageLimit - 1;
+
+                    if(totalPages < endPage) {
+                        endPage = totalPages
+                    }
+
+                    // 맨 첫 페이지
+                    if(currentPage > 0 && pageLimit < currentPage) {
+                        const first = document.createElement("a")
+                        const li = document.createElement("li")
+                        const firstLink = '#'
+                        first.setAttribute("href", firstLink)
+                        first.append("처음")
+                        first.onclick = function () {
+                            $("#page").val(0)
+                            pageList()
+                        }
+                        li.append(first)
+                        page.append(li)
+                    }
+
+                    // 이전 페이지
+                    if(currentPage > pageLimit) {
+                        const prev = document.createElement("a")
+                        const li = document.createElement("li")
+                        const prevLink = '#'
+                        prev.setAttribute("href", prevLink)
+                        prev.append("이전")
+                        prev.onclick = function () {
+                            $("#page").val(startPage == 1 ? 0 : startPage - 2)
+                            pageList()
+                        }
+                        li.append(prev)
+                        page.append(li)
+                    }
+
+                    for(let i = startPage; i <= endPage; i++) {
                         const li = document.createElement("li")
                         const a = document.createElement("a")
                         const link = '#'
                         // const link = '/post/list?page=' + i
                         a.setAttribute("href", link)
-                        a.append(i+1)
+                        a.append(i)
                         a.onclick = function () {
-                            $("#page").val(i)
+                            $("#page").val(i - 1)
                             pageList()
                         }
 
@@ -100,6 +160,36 @@
 
                     }
 
+                    // 다음 페이지
+                    let nextPage = endPage + 1
+                    if(nextPage <= totalPages) {
+                        const next = document.createElement("a")
+                        const li = document.createElement("li")
+                        const nextLink = '#'
+                        next.setAttribute("href", nextLink)
+                        next.append("다음")
+                        next.onclick = function () {
+                            $("#page").val(nextPage < totalPages ? nextPage - 1 : totalPages - 1)
+                            pageList()
+                        }
+                        li.append(next)
+                        page.append(li)
+                    }
+
+                    // 맨 마지막 페이지
+                    if(currentPage < totalPages && nextPage < totalPages) {
+                        const last = document.createElement("a")
+                        const li = document.createElement("li")
+                        const lastLink = '#'
+                        last.setAttribute("href", lastLink)
+                        last.append("맨뒤")
+                        last.onclick = function () {
+                            $("#page").val(totalPages - 1)
+                            pageList()
+                        }
+                        li.append(last)
+                        page.append(li)
+                    }
                 }
             })
         }
@@ -160,6 +250,7 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                 <tr>
+                    <th>게시글 id</th>
                     <th>제목</th>
                     <th>삭제</th>
                     <th>상세보기</th>
