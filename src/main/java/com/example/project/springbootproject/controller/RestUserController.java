@@ -42,7 +42,7 @@ public class RestUserController {
     }
 
     @GetMapping("/user/logout")
-    public ApiResult<?> logout(HttpServletRequest request, HttpServletResponse response, @RequestHeader(value = "userToken", required = false) String userToken)
+    public ApiResult<?> logout(@RequestHeader(value = "userToken", required = false) String userToken)
         throws UnsupportedEncodingException {
         String username = (String) JwtUtils.checkJwt(userToken).get("username");
         if("".equals(username)) {
