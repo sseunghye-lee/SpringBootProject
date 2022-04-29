@@ -23,7 +23,6 @@
 
     <script th:inline="javascript">
         $(document).ready(function(){
-            const token = getCookie("userToken")
             const btn = document.getElementById('btnNew')
 
             $.ajax({
@@ -41,8 +40,6 @@
                     pageList();
                 }
             })
-
-            // pageList();
         })
 
         function pageList() {
@@ -55,7 +52,7 @@
                 },
                 error:function(e) {
                     console.log(e)
-                    // alert("리스트를 불러오지 못했습니다")
+                    alert("리스트를 불러오지 못했습니다")
                     location.href="/mainPage"
                 },
                 success:function(data) {
@@ -183,23 +180,6 @@
                         li.append(last)
                         page.append(li)
                     }
-
-                    // for(let i = 0; i < totalPage; i++) {
-                    //     const li = document.createElement("li")
-                    //     const a = document.createElement("a")
-                    //     const link = '#'
-                    //     // const link = '/post/list?page=' + i
-                    //     a.setAttribute("href", link)
-                    //     a.append(i+1)
-                    //     a.onclick = function () {
-                    //         $("#page").val(i)
-                    //         pageList()
-                    //     }
-                    //
-                    //     li.append(a)
-                    //     page.append(li)
-                    //
-                    // }
                 }
             })
         }
@@ -249,10 +229,6 @@
             </table>
 
             <ul id="paging">
-<!--                <li th:if="${boardList.getTotalPages() == 0}">게시글이 없습니다</li>-->
-<!--                <li th:if="${boardList.getTotalPages() > 0}" th:each="page : ${#numbers.sequence(0, boardList.getTotalPages() - 1)}">-->
-<!--                    <a th:text="${page+1}" th:href="@{/post-list(page=${page})}"></a>-->
-<!--                </li>-->
             </ul>
 
         </div>

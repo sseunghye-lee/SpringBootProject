@@ -56,8 +56,6 @@
                         location.href="/my/post";
                     }
                 })
-                // submitButton.type = "submit";
-                // updateForm.action="/update/" + boardId + "/" + title + "/" + content;
                 return true;
             }
         }
@@ -83,11 +81,6 @@
                     document.getElementById('name').value = data.username;
                     $('#title').val(data.title);
                     $('#content').val(data.content);
-
-                    // $('#name').val(data.username)
-                    // $('input[name=username]').val(data.username)
-                    // let usernameHtml = "<input class='form-control' id='name' type='text' value='" + data.username + "' data-sb-validations='required' readonly />"
-                    // $("#nameAppend").append(usernamenameHtml);
                 }
             });
         });

@@ -96,15 +96,12 @@
             }
         }
         function onKeyDown() {
-            let usernameCheckVal = $("#userCheck").val();
             $("#userCheck").attr("value", "N");
         }
     </script>
     <script th:inline="javascript">
         function usernameCheck() {
             let username = document.getElementById("username").value;
-            let register = document.getElementById("register");
-            let usernameCheckVal = $("#userCheck").val();
 
             $.ajax({
                 url:'/usernameCheck',
@@ -157,7 +154,6 @@
                                             placeholder="Username" onkeydown="onKeyDown()">
                                     </div>
                                     <div class="col-sm-6">
-<!--                                        <input type="button" id="userCheck" class="btn btn-primary btn-user btn-block" value="중복확인" onclick="usernameCheck()">-->
                                         <button class="btn btn-primary btn-user btn-block" id="userCheck" type="button" onclick="usernameCheck()" value="N">중복확인</button>
                                     </div>
                                 </div>

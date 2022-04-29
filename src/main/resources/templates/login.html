@@ -41,7 +41,6 @@
                 },
                 success:function(token) {
                     setCookie("userToken", token.response)
-                    // console.log(getCookie("userToken"))
                     alert("로그인되었습니다")
                     location.href="/mainPage"
                 }
