@@ -38,11 +38,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/post_new")
-    public String postNew(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        session.setAttribute("user", user);
-        model.addAttribute("userSession", user);
+    public String postNew() {
         return "post_new";
     }
 
@@ -57,21 +53,8 @@ public class PostController {
     }
 
     @GetMapping("/post_update")
-    public String postUpdate(@RequestParam(value="boardId") long boardId, Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-
-//        Board board = postService.findBoard(boardId);
+    public String postUpdate(@RequestParam(value="boardId") long boardId, Model model) {
         model.addAttribute("myBoard", boardId);
-
-//        if(!board.getUsername().equals(user.getUsername())){
-//            throw new MyPostException("정상적인 경로를 통해 접근해주세요");
-//        }
-
-        String referer = request.getHeader("referer");
-        model.addAttribute("updateReferer", referer);
-        model.addAttribute("userSession", user);
-
         return "post_update";
     }
 }

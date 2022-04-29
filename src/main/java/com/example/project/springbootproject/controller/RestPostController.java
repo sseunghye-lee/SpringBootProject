@@ -86,9 +86,6 @@ public class RestPostController {
         Board board = postService.findBoard(boardId);
         model.addAttribute("board", board);
 
-        String referer = request.getHeader("referer");
-        model.addAttribute("backPage", referer);
-
         return board;
     }
 
@@ -105,9 +102,6 @@ public class RestPostController {
         if (!board.getUsername().equals(username)) {
             throw new BoardException("정상적인 경로를 통해 접근해주세요");
         }
-
-        String referer = request.getHeader("referer");
-        model.addAttribute("updateReferer", referer);
 
         return board;
     }
@@ -157,11 +151,5 @@ public class RestPostController {
         postService.insertPost(insertDto);
 
         return success("INSERT OK");
-    }
-
-    @RequestMapping("/backPage")
-    public String backPage(HttpServletRequest request) {
-        String referer = request.getHeader("referer");
-        return "redirect:" + referer;
     }
 }

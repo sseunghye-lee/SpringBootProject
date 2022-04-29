@@ -21,11 +21,7 @@ public class IndexController {
     }
 
     @GetMapping("/mainPage")
-    public String mainPage(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        session.setAttribute("user", user);
-        model.addAttribute("userSession", user);
+    public String mainPage() {
         return "mainPage";
     }
 

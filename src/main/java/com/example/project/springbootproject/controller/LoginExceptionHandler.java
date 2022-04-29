@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class LoginExceptionHandler {
 
-//    @ExceptionHandler(UserException.class)
-//    public String userError(Model model, EntityNotFoundException e) {
-//        model.addAttribute("error", "사용자를 찾을 수 없습니다");
-//        return "login";
-//    }
-
     @ExceptionHandler(UserException.class)
     public ResponseEntity<?> userError(Model model, EntityNotFoundException e) {
         model.addAttribute("error", "사용자를 찾을 수 없습니다");
