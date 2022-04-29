@@ -10,7 +10,9 @@ import com.example.project.springbootproject.exception.BoardException;
 import com.example.project.springbootproject.exception.MyPostException;
 import com.example.project.springbootproject.service.PostService;
 import com.example.project.springbootproject.util.ApiUtils.ApiResult;
+import com.example.project.springbootproject.util.JwtUtils;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,34 +45,44 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class RestPostController {
 
-    @Autowired
     private final PostService postService;
+
+    @GetMapping("/post/userToken")
+    public ApiResult<String> postUserToken(Model model, @RequestHeader(value = "userToken", required = false) String userToken)
+        throws UnsupportedEncodingException {
+        String username = (String) JwtUtils.checkJwt(userToken).get("username");
+        model.addAttribute("userToken", username);
+
+        return success(username);
+    }
 
     @GetMapping("/post/list")
     public ModelAndView post(Model model, HttpServletRequest request) {
         String page = request.getParameter("page");
         page = page == null ? "0" : page;
         model.addAttribute("page", page);
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        model.addAttribute("userSession", user);
+//        HttpSession session = request.getSession();
+//        UserDTO user = (UserDTO) session.getAttribute("user");
+//        model.addAttribute("userSession", user);
 
         return new ModelAndView("post");
     }
 
     @GetMapping("/post-list")
-    public  ApiResult<Page<Board>> postList(Model model, @PageableDefault(size = 10, sort ="boardId", direction = Direction.DESC)
-        Pageable pageable, HttpServletRequest request) {
+    public ApiResult<Page<Board>> postList(Model model,
+        @PageableDefault(size = 10, sort = "boardId", direction = Direction.DESC)
+            Pageable pageable, HttpServletRequest request, @RequestHeader(value = "userToken", required = false) String userToken)
+        throws UnsupportedEncodingException {
 
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        model.addAttribute("userSession", user);
+        String username = (String) JwtUtils.checkJwt(userToken).get("username");
+        model.addAttribute("userToken", username);
 
         return success(postService.getBoardList(pageable));
     }
 
     @RequestMapping(value = "/detail/{boardId}", method = RequestMethod.GET)
-    public Board postDetail(@PathVariable("boardId") long boardId, Model model, HttpServletRequest request) {
+    public Board postDetail(@PathVariable("boardId") long boardId, Model model,
+        HttpServletRequest request) {
         Board board = postService.findBoard(boardId);
         model.addAttribute("board", board);
 
@@ -80,33 +93,35 @@ public class RestPostController {
     }
 
     @GetMapping("/post/update/{boardId}")
-    public Board postUpdate(@PathVariable("boardId") long boardId, Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
+    public Board postUpdate(@PathVariable("boardId") long boardId, Model model,
+        HttpServletRequest request, @RequestHeader(value = "userToken", required = false) String userToken)
+        throws UnsupportedEncodingException {
+
+        String username = (String) JwtUtils.checkJwt(userToken).get("username");
 
         Board board = postService.findBoard(boardId);
         model.addAttribute("myBoard", boardId);
 
-        if(!board.getUsername().equals(user.getUsername())){
+        if (!board.getUsername().equals(username)) {
             throw new BoardException("정상적인 경로를 통해 접근해주세요");
         }
 
         String referer = request.getHeader("referer");
         model.addAttribute("updateReferer", referer);
-        model.addAttribute("userSession", user);
 
         return board;
     }
 
     @PutMapping("/update/{boardId}/{title}/{content}")
-    public ApiResult<String> updatePost(@PathVariable("boardId") long boardId, @PathVariable("title") String title, @PathVariable("content") String content, HttpServletResponse response)
+    public ApiResult<String> updatePost(@PathVariable("boardId") long boardId,
+        @PathVariable("title") String title, @PathVariable("content") String content)
         throws IOException {
         postService.updateBoard(boardId, title, content);
         return success("UPDATE OK");
     }
 
     @GetMapping("/my/post")
-    public ModelAndView myPost(Model model, HttpServletRequest request) {
+    public ModelAndView myPost(Model model, HttpServletRequest request){
         String page = request.getParameter("page");
         page = page == null ? "0" : page;
         model.addAttribute("page", page);
@@ -114,15 +129,21 @@ public class RestPostController {
     }
 
     @GetMapping("/my-post")
-    public ApiResult<Page<Board>> myBoardList(Model model, HttpServletRequest request, @PageableDefault(size = 10, sort ="boardId", direction = Sort.Direction.DESC) Pageable pageable) {
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        model.addAttribute("userSession", user);
-        return success(postService.myBoardList(user.getUsername(), pageable));
+    public ApiResult<Page<Board>> myBoardList(
+        @RequestHeader(value = "userToken", required = false) String userToken,
+        @PageableDefault(size = 10, sort = "boardId", direction = Sort.Direction.DESC) Pageable pageable)
+        throws UnsupportedEncodingException {
+
+        System.out.println(userToken);
+        String username = (String) JwtUtils.checkJwt(userToken).get("username");
+        System.out.println(JwtUtils.checkJwt(userToken).get("username"));
+
+        return success(postService.myBoardList(username, pageable));
     }
 
     @DeleteMapping("/post/delete/{boardId}")
-    public ApiResult<String> postDelete(@PathVariable("boardId") long boardId, @RequestBody Map<String, Object> request)
+    public ApiResult<String> postDelete(@PathVariable("boardId") long boardId,
+        @RequestBody Map<String, Object> request)
         throws IOException {
 
         postService.deleteBoard(boardId);
@@ -130,23 +151,10 @@ public class RestPostController {
         return success("DELETE OK");
     }
 
-//    @PostMapping("/post/insert")
-//    public void postInsert(BoardDTO boardDTO, Model model, HttpServletRequest request, HttpServletResponse response)
-//        throws IOException {
-//        postService.insertPost(boardDTO);
-//        HttpSession session = request.getSession();
-//        UserDTO user = (UserDTO) session.getAttribute("user");
-//        model.addAttribute("userSession", user);
-//
-//        response.sendRedirect("/post/list");
-//    }
-
     @PostMapping("/post/insert")
-    public ApiResult<String> postInsert(@RequestBody InsertDto insertDto, HttpServletRequest request, Model model) {
+    public ApiResult<String> postInsert(@RequestBody InsertDto insertDto,
+        HttpServletRequest request, Model model) {
         postService.insertPost(insertDto);
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        model.addAttribute("userSession", user);
 
         return success("INSERT OK");
     }

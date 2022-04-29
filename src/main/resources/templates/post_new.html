@@ -19,6 +19,26 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:src="@{js/commons.js}"></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            $.ajax({
+                url:'/post/userToken',
+                type:'GET',
+                headers : {
+                    userToken : getCookie("userToken")
+                },
+                error:function() {
+                    alert("로그인이 필요합니다")
+                    location.href="/"
+                },
+                success:function(s) {
+                    $('#username').val(s.response);
+                }
+            })
+        })
+    </script>
 
     <script th:inline="javascript">
         function insertPost() {
@@ -76,7 +96,7 @@
                 <form th:method="post" id="postForm" data-sb-form-api-token="API_TOKEN">
                     <!-- Name input-->
                     <div class="form-floating mb-3">
-                        <input class="form-control" id="username" name="username" type="text" th:value="${userSession.getUsername()}" placeholder="Enter your name..." data-sb-validations="required" readonly />
+                        <input class="form-control" id="username" name="username" type="text" placeholder="Enter your name..." data-sb-validations="required" readonly />
                         <label for="username">Username</label>
                     </div>
 

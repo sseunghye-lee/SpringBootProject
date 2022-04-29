@@ -19,6 +19,36 @@
 
     <!-- Custom styles for this template-->
     <link th:href="@{/bootstrap/css/sb-admin-2.min.css}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:src="@{js/commons.js}"></script>
+
+    <script th:inline="javascript">
+        function loginButton() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            $.ajax({
+                url:"/login",
+                type:'POST',
+                dataType:'JSON',
+                contentType: 'application/json; charset=utf-8',
+                data:JSON.stringify({"username": username, "password":password}),
+                error: function(e) {
+                    alert("username이나 password를 다시 확인해주세요")
+                    location.href="/"
+                },
+                success:function(token) {
+                    setCookie("userToken", token.response)
+                    // console.log(getCookie("userToken"))
+                    alert("로그인되었습니다")
+                    location.href="/mainPage"
+                }
+            })
+            return true;
+        }
+    </script>
 
 </head>
 
@@ -39,7 +69,7 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">LOGIN</h1>
                                     </div>
-                                    <form class="user" th:action="@{/login}" method="post">
+                                    <form class="user" th:method="post">
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user"
                                                 id="username" name="username" aria-describedby="emailHelp"
@@ -49,10 +79,10 @@
                                             <input type="password" class="form-control form-control-user"
                                                    id="password" name="password" placeholder="Password">
                                         </div>
-                                        <div class="form-group">
-                                            <div style="color: red" th:if = "${error != null}" th:text="${error}"/>
-                                        </div>
-                                        <input type="submit"  class="btn btn-primary btn-user btn-block" value="로그인">
+<!--                                        <div class="form-group">-->
+<!--                                            <div style="color: red" th:if = "${error != null}" th:text="${error}"/>-->
+<!--                                        </div>-->
+                                        <input type="button" onclick="loginButton()"  class="btn btn-primary btn-user btn-block" value="로그인">
                                         <hr>
                                         <a th:href="@{/register}" class="btn btn-google btn-user btn-block">
                                             회원가입

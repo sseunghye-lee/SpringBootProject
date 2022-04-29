@@ -19,10 +19,30 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:src="@{/js/commons.js}"></script>
 
     <script th:inline="javascript">
         $(document).ready(function(){
-           pageList();
+            const token = getCookie("userToken")
+            const btn = document.getElementById('btnNew')
+
+            $.ajax({
+                url:'/post/userToken',
+                type:'GET',
+                headers : {
+                    userToken : getCookie("userToken")
+                },
+                error:function(e) {
+                    btn.style.display = 'none';
+                    alert("로그인이 필요합니다")
+                    location.href="/"
+                },
+                success:function(s) {
+                    pageList();
+                }
+            })
+
+            // pageList();
         })
 
         function pageList() {
@@ -30,9 +50,12 @@
                 url:'/post-list?page=' + $("#page").val(),
                 type:'GET',
                 dataType:'JSON',
+                headers : {
+                    userToken : getCookie("userToken")
+                },
                 error:function(e) {
                     console.log(e)
-                    alert("리스트를 불러오지 못했습니다")
+                    // alert("리스트를 불러오지 못했습니다")
                     location.href="/mainPage"
                 },
                 success:function(data) {
@@ -200,12 +223,10 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h5 class="m-0 font-weight-bold text-primary">게시판</h5>
-        <th:block th:if="${userSession != null}">
-            <a th:href="@{/post_new}" class="btn btn-primary btn-user btn-block">
-                게시글 작성
-            </a>
-        </th:block>
 
+        <a th:href="@{/post_new}" id="btnNew" class="btn btn-primary btn-user btn-block">
+            게시글 작성
+        </a>
         <a th:href="@{/mainPage}" class="btn btn-primary btn-user btn-block">
             메인페이지로
         </a>

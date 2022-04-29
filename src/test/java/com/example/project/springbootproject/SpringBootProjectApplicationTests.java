@@ -34,8 +34,8 @@ class SpringBootProjectApplicationTests {
     private ObjectMapper objectMapper;
 
 
-    @Test
-    @Rollback(value = false)
+//    @Test
+//    @Rollback(value = false)
     void contextLoads() throws Exception {
         for(long i = 0; i < 100000; i++) {
             ResultActions result = this.mockMvc.perform(post("/post/insert")

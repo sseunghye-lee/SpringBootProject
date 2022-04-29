@@ -15,6 +15,74 @@
     <link th:href="@{https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic}" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link th:href="@{/bootstrap/css/styles.css}" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:src="@{js/commons.js}"></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            console.log(getCookie("userToken"))
+            $.ajax({
+                url:'/post/userToken',
+                type:'GET',
+                headers : {
+                    userToken : getCookie("userToken")
+                },
+                error:function(e) {
+                    alert("로그인이 필요합니다")
+                    location.href="/"
+                },
+                success:function(s) {
+                    console.log(s.response)
+                    if(s.response == null || s.response == "") {
+                        alert("로그인이 필요합니다")
+                        location.href="/"
+                    }
+                }
+            })
+        })
+    </script>
+    <script th:inline="javascript">
+        function myPost() {
+            location.href="/my/post"
+            // $.ajax({
+            //     url:'/my/post',
+            //     type:'GET',
+            //     dataType:'JSON',
+            //     headers : {
+            //       userToken : getCookie("userToken")
+            //     },
+            //     error:function(e){
+            //         console.log(e)
+            //         alert("페이지 이동 실패")
+            //     },
+            //     success:function() {
+            //         location.href="/my/post"
+            //     }
+            // })
+        }
+
+        function logout() {
+            $.ajax({
+                url:'/user/logout',
+                type:'GET',
+                dataType:'JSON',
+                headers : {
+                    userToken : getCookie("userToken")
+                },
+                error:function() {
+                    alert("로그아웃 실패")
+                },
+                success:function() {
+                    setCookie("userToken", "")
+                    location.href="/"
+                }
+            })
+        }
+
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
@@ -26,14 +94,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-auto">
-                <th:block th:if="${userSession == null}">
-                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/}">로그인</a></li>
-                </th:block>
-                <th:block th:if="${userSession != null}">
-                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/user/logout}">로그아웃</a></li>
-                </th:block>
+                <li id="userLogIn" class="nav-item mx-0 mx-lg-1"><a id="userLogout" class="nav-link py-3 px-0 px-lg-3 rounded" onclick="logout()">로그아웃</a></li>
+<!--                <li id="userLogIn" class="nav-item mx-0 mx-lg-1"><a id="userLogout" class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/user/logout}">로그아웃</a></li>-->
                 <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/post/list}">게시판</a></li>
-                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/my/post}">내 게시판</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" onclick="myPost()">내 게시판</a></li>
+<!--                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/my/post}">내 게시판</a></li>-->
             </ul>
         </div>
     </div>

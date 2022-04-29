@@ -40,6 +40,6 @@ public class User {
     }
 
     public void login(HttpSession session) {
-        session.setAttribute("user", new UserDTO(this.username, null, this.email, this.phone));
+//        session.setAttribute("user", new UserDTO(this.username, null, this.email, this.phone));
     }
 }
