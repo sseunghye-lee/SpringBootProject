@@ -6,6 +6,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -31,6 +33,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
@@ -270,5 +273,110 @@ class SpringBootProjectApplicationTests {
             .email("0503Test@aceenter.com")
             .phone("010-1235-8965")
             .build();
+    }
+
+    @Test
+    void postDetail() throws Exception {
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/detail/{boardId}", 10)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(document("post-detail", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("boardId").description("게시글 ID")
+                ),
+                responseFields(
+                    fieldWithPath("boardId").type(JsonFieldType.NUMBER)
+                        .description("게시글 아이디"),
+                    fieldWithPath("content").type(JsonFieldType.STRING)
+                        .description("게시글 내용"),
+                    fieldWithPath("delete").type(JsonFieldType.NUMBER)
+                        .description("게시글 삭제 여부"),
+                    fieldWithPath("title").type(JsonFieldType.STRING)
+                        .description("게시글 제목"),
+                    fieldWithPath("username").type(JsonFieldType.STRING)
+                        .description("게시글 등록자")
+                )
+            ));
+    }
+
+    @Test
+    void myPostDetail() throws Exception {
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/post/update/{boardId}", 34)
+            .header("userToken", getUserToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(document("myPost-detail", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("boardId").description("게시글 ID")
+                ),
+                responseFields(
+                    fieldWithPath("boardId").type(JsonFieldType.NUMBER)
+                        .description("게시글 아이디"),
+                    fieldWithPath("content").type(JsonFieldType.STRING)
+                        .description("게시글 내용"),
+                    fieldWithPath("delete").type(JsonFieldType.NUMBER)
+                        .description("게시글 삭제 여부"),
+                    fieldWithPath("title").type(JsonFieldType.STRING)
+                        .description("게시글 제목"),
+                    fieldWithPath("username").type(JsonFieldType.STRING)
+                        .description("게시글 등록자")
+                )
+            ));
+    }
+
+    @Test
+    void postUpdate() throws Exception {
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.put("/update/{boardId}/{title}/{content}", 34, "0503title", "0503testcode")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(document("post-update", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("boardId").description("게시글 ID"),
+                    parameterWithName("title").description("게시글 제목"),
+                    parameterWithName("content").description("게시글 내용")
+                ),
+                responseFields(
+                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
+                    subsectionWithPath("response").type(JsonFieldType.STRING)
+                        .description("Response Body"),
+                    subsectionWithPath("error").type(JsonFieldType.OBJECT).description("Error Body")
+                        .optional()
+                )
+            ));
+    }
+
+    @Test
+    void postDelete() throws Exception {
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/post/delete/{boardId}", 34)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(document("post-delete", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("boardId").description("게시글 ID")
+                ),
+                responseFields(
+                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
+                    subsectionWithPath("response").type(JsonFieldType.STRING)
+                        .description("Response Body"),
+                    subsectionWithPath("error").type(JsonFieldType.OBJECT).description("Error Body")
+                        .optional()
+                )
+            ));
     }
 }

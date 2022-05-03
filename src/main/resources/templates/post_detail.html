@@ -35,7 +35,7 @@
                         location.href="/post/list";
                     },
                     success: function (data) {
-
+                        console.log(data)
                         $('#name').val(data.username);
                         $('#title').val(data.title);
                         $('#content').val(data.content);

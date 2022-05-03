@@ -81,8 +81,7 @@ public class RestPostController {
     }
 
     @RequestMapping(value = "/detail/{boardId}", method = RequestMethod.GET)
-    public Board postDetail(@PathVariable("boardId") long boardId, Model model,
-        HttpServletRequest request) {
+    public Board postDetail(@PathVariable("boardId") long boardId, Model model) {
         Board board = postService.findBoard(boardId);
         model.addAttribute("board", board);
 
@@ -136,8 +135,7 @@ public class RestPostController {
     }
 
     @DeleteMapping("/post/delete/{boardId}")
-    public ApiResult<String> postDelete(@PathVariable("boardId") long boardId,
-        @RequestBody Map<String, Object> request)
+    public ApiResult<String> postDelete(@PathVariable("boardId") long boardId)
         throws IOException {
 
         postService.deleteBoard(boardId);

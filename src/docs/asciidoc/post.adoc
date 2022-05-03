@@ -21,3 +21,14 @@ operation::board-list[snippets='http-request,http-response,response-body,respons
 == 나의 게시글 목록
 operation::myBoard-list[snippets='http-request,http-response,response-body,response-fields']
 
+== 게시글 상세보기
+operation::post-detail[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+== 내 게시글 상세보기
+operation::myPost-detail[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+== 게시글 수정
+operation::post-update[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+== 게시글 삭제
+operation::post-delete[snippets='http-request,path-parameters,http-response,response-body,response-fields']
