@@ -1,0 +1,22 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+= Rest Docs Structures API Document
+:doctype: book
+:toc: left
+:sectnums:
+:toclevels: 3
+:source-highlighter: highlightjs
+:operation-http-request-title: Example Request
+:operation-request-fields-title: Request
+:operation-http-response-title: Example Response
+:operation-response-fields-title: Response
+
+== 로그인
+operation::login[snippets='http-request,http-response,request-body,response-body,response-fields']
+
+== 로그아웃
+operation::logout[snippets='http-request,http-response,response-body']
+
+== 회원가입
+operation::register[snippets='http-request,http-response,request-body,request-fields,response-body,response-fields']

@@ -71,7 +71,7 @@ public class RestPostController {
     @GetMapping("/post-list")
     public ApiResult<Page<Board>> postList(Model model,
         @PageableDefault(size = 10, sort = "boardId", direction = Direction.DESC)
-            Pageable pageable, HttpServletRequest request, @RequestHeader(value = "userToken", required = false) String userToken)
+            Pageable pageable, @RequestHeader(value = "userToken", required = false) String userToken)
         throws UnsupportedEncodingException {
 
         String username = (String) JwtUtils.checkJwt(userToken).get("username");

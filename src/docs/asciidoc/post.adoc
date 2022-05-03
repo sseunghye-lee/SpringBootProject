@@ -1,0 +1,23 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+= Rest Docs Structures API Document
+:doctype: book
+:toc: left
+:sectnums:
+:toclevels: 3
+:source-highlighter: highlightjs
+:operation-http-request-title: Example Request
+:operation-request-fields-title: Request
+:operation-http-response-title: Example Response
+:operation-response-fields-title: Response
+
+== 게시글 등록
+operation::post-insert[snippets='http-request,request-fields,http-response']
+
+== 게시글 목록
+operation::board-list[snippets='http-request,http-response,response-body,response-fields']
+
+== 나의 게시글 목록
+operation::myBoard-list[snippets='http-request,http-response,response-body,response-fields']
+
