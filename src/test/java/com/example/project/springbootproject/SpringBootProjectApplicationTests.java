@@ -155,6 +155,8 @@ class SpringBootProjectApplicationTests {
         return UserDTO.builder()
             .username("userTest")
             .password("12345")
+            .email("0503Test@aceenter.com")
+            .phone("010-1235-8965")
             .build();
     }
 
@@ -204,6 +206,16 @@ class SpringBootProjectApplicationTests {
         result.andExpect(status().isOk())
             .andDo(document("login", preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("username").type(JsonFieldType.STRING)
+                        .description("사용자 이름"),
+                    fieldWithPath("password").type(JsonFieldType.STRING)
+                        .description("사용자 비밀번호"),
+                    fieldWithPath("email").type(JsonFieldType.STRING)
+                        .description("사용자 이메일"),
+                    fieldWithPath("phone").type(JsonFieldType.STRING)
+                        .description("사용자 번호")
+                ),
                 responseFields(
                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
                     subsectionWithPath("response").type(JsonFieldType.STRING)
@@ -370,6 +382,27 @@ class SpringBootProjectApplicationTests {
                 pathParameters(
                     parameterWithName("boardId").description("게시글 ID")
                 ),
+                responseFields(
+                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
+                    subsectionWithPath("response").type(JsonFieldType.STRING)
+                        .description("Response Body"),
+                    subsectionWithPath("error").type(JsonFieldType.OBJECT).description("Error Body")
+                        .optional()
+                )
+            ));
+    }
+
+    @Test
+    void postUserToken() throws Exception {
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/post/userToken")
+            .header("userToken", getUserToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(document("user-token", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 responseFields(
                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
                     subsectionWithPath("response").type(JsonFieldType.STRING)

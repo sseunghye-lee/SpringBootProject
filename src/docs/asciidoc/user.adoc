@@ -13,10 +13,13 @@ endif::[]
 :operation-response-fields-title: Response
 
 == 로그인
-operation::login[snippets='http-request,http-response,request-body,response-body,response-fields']
+operation::login[snippets='http-request,http-response,request-body,request-fields,response-body,response-fields']
 
 == 로그아웃
 operation::logout[snippets='http-request,http-response,response-body']
 
 == 회원가입
 operation::register[snippets='http-request,http-response,request-body,request-fields,response-body,response-fields']
+
+== 로그인 정보(토큰)
+operation::user-token[snippets='http-request,http-response,response-body,response-fields']
