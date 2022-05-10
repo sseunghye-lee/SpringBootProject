@@ -153,10 +153,10 @@ class SpringBootProjectApplicationTests {
 
     private UserDTO makeRequestForLogIn() {
         return UserDTO.builder()
-            .username("userTest")
+            .username("aceenter")
             .password("12345")
-            .email("0503Test@aceenter.com")
-            .phone("010-1235-8965")
+            .email("aceenter@aceenter.com")
+            .phone("010-5555-7895")
             .build();
     }
 
