@@ -289,7 +289,7 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void postDetail() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/detail/{boardId}", 10)
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/detail/{boardId}", 14)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
         );
@@ -317,7 +317,7 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void myPostDetail() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/post/update/{boardId}", 34)
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/post/update/{boardId}", 14)
             .header("userToken", getUserToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -346,7 +346,7 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void postUpdate() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.put("/update/{boardId}/{title}/{content}", 34, "0503title", "0503testcode")
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.put("/update/{boardId}/{title}/{content}", 14, "0510title", "0510testcode")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
         );
