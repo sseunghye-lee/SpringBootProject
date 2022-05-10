@@ -371,7 +371,7 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void postDelete() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/post/delete/{boardId}", 34)
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/post/delete/{boardId}", 14)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
         );
