@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(properties = "spring.config.location=" +
-    "classpath:/application.properties" )
+    "classpath:/application.properties")
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Transactional
@@ -57,7 +57,7 @@ class SpringBootProjectApplicationTests {
 //    @Test
 //    @Rollback(value = false)
     void contextLoads() throws Exception {
-        for(long i = 0; i < 100000; i++) {
+        for (long i = 0; i < 30; i++) {
             ResultActions result = this.mockMvc.perform(post("/post/insert")
                 .content(objectMapper.writeValueAsString(makeRequest()))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -105,7 +105,7 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void getBoardList() throws Exception {
-        ResultActions result = this.mockMvc.perform(get("/post-list")
+        ResultActions result = this.mockMvc.perform(get("/post-list").param("size", "10").param("page", "0")
             .header("userToken", getUserToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -118,6 +118,10 @@ class SpringBootProjectApplicationTests {
         result.andExpect(status().isOk())
             .andDo(document("board-list", preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestParameters(
+                    parameterWithName("page").description("조회할 페이지"),
+                    parameterWithName("size").description("한 페이지당 크기")
+                ),
                 responseFields(
                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
                     subsectionWithPath("response").type(JsonFieldType.OBJECT)
@@ -163,7 +167,7 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void getMyBoardList() throws Exception {
-        ResultActions result = this.mockMvc.perform(get("/my-post")
+        ResultActions result = this.mockMvc.perform(get("/my-post").param("size", "10").param("page", "0")
             .header("userToken", getUserToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -176,6 +180,10 @@ class SpringBootProjectApplicationTests {
         result.andExpect(status().isOk())
             .andDo(document("myBoard-list", preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                requestParameters(
+                    parameterWithName("page").description("조회할 페이지"),
+                    parameterWithName("size").description("한 페이지당 크기")
+                ),
                 responseFields(
                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
                     subsectionWithPath("response").type(JsonFieldType.OBJECT)
@@ -290,9 +298,10 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void postDetail() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/detail/{boardId}", 14)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
+        ResultActions result = this.mockMvc.perform(
+            RestDocumentationRequestBuilders.get("/detail/{boardId}", 14)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
         );
 
         result.andExpect(status().isOk())
@@ -318,10 +327,11 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void myPostDetail() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/post/update/{boardId}", 14)
-            .header("userToken", getUserToken())
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
+        ResultActions result = this.mockMvc.perform(
+            RestDocumentationRequestBuilders.get("/post/update/{boardId}", 14)
+                .header("userToken", getUserToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
         );
 
         result.andExpect(status().isOk())
@@ -347,9 +357,11 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void postUpdate() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.put("/update/{boardId}/{title}/{content}", 14, "0510title", "0510testcode")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
+        ResultActions result = this.mockMvc.perform(
+            RestDocumentationRequestBuilders.put("/update/{boardId}/{title}/{content}", 14,
+                    "0510title", "0510testcode")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
         );
 
         result.andExpect(status().isOk())
@@ -372,9 +384,10 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void postDelete() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.delete("/post/delete/{boardId}", 14)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
+        ResultActions result = this.mockMvc.perform(
+            RestDocumentationRequestBuilders.delete("/post/delete/{boardId}", 14)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
         );
 
         result.andExpect(status().isOk())
@@ -395,9 +408,10 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void usernameCheck() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.post("/usernameCheck").param("username", "testUser")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
+        ResultActions result = this.mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/usernameCheck").param("username", "testUser")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
         );
 
         result.andExpect(status().isOk())
@@ -419,10 +433,11 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void postUserToken() throws Exception {
-        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.get("/post/userToken")
-            .header("userToken", getUserToken())
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
+        ResultActions result = this.mockMvc.perform(
+            RestDocumentationRequestBuilders.get("/post/userToken")
+                .header("userToken", getUserToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
         );
 
         result.andExpect(status().isOk())

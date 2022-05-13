@@ -16,10 +16,10 @@ endif::[]
 operation::post-insert[snippets='http-request,request-fields,http-response']
 
 == 게시글 목록
-operation::board-list[snippets='http-request,http-response,response-body,response-fields']
+operation::board-list[snippets='http-request,http-response,request-parameters,response-body,response-fields']
 
 == 나의 게시글 목록
-operation::myBoard-list[snippets='http-request,http-response,response-body,response-fields']
+operation::myBoard-list[snippets='http-request,http-response,request-parameters,response-body,response-fields']
 
 == 게시글 상세보기
 operation::post-detail[snippets='http-request,path-parameters,http-response,response-body,response-fields']
