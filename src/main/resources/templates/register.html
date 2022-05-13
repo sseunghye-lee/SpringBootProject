@@ -114,10 +114,11 @@
                   location.href="/"
                 },
                 success:function(data) {
-                    if(data == true) {
+                    console.log(data);
+                    if(data.response == true) {
                         alert("이미 있는 username입니다.");
                         $("#userCheck").attr("value", "N");
-                    } else if(data == false) {
+                    } else if(data.response == false) {
                         if(username =='') {
                             alert("username을 입력해주세요");
                             $("#userCheck").attr("value", "N");

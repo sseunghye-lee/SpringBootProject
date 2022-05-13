@@ -8,6 +8,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -390,6 +391,30 @@ class SpringBootProjectApplicationTests {
                         .optional()
                 )
             ));
+    }
+
+    @Test
+    void usernameCheck() throws Exception {
+        ResultActions result = this.mockMvc.perform(RestDocumentationRequestBuilders.post("/usernameCheck").param("username", "testUser")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(document("username-check", preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),
+                    subsectionWithPath("response").type(JsonFieldType.BOOLEAN)
+                        .description("Response Body"),
+                    subsectionWithPath("error").type(JsonFieldType.OBJECT).description("Error Body")
+                        .optional()
+                )
+            ));
+    }
+
+    private String makeRequestForUsername() throws Exception {
+        return "testUser";
     }
 
     @Test

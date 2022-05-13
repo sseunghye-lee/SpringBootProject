@@ -60,8 +60,8 @@ public class RestUserController {
 
     @ResponseBody
     @PostMapping("/usernameCheck")
-    public boolean usernameCheck(@RequestParam("username") String username) {
-        return userService.usernameCheck(username);
+    public ApiResult<?> usernameCheck(@RequestParam("username") String username) {
+        return success(userService.usernameCheck(username));
     }
 
 }
