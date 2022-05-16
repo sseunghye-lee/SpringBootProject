@@ -61,6 +61,10 @@ public class RestPostController {
         String page = request.getParameter("page");
         page = page == null ? "0" : page;
         model.addAttribute("page", page);
+
+        String searchText = request.getParameter("search");
+        searchText = searchText == null ? "" : searchText;
+        model.addAttribute("search", searchText);
 //        HttpSession session = request.getSession();
 //        UserDTO user = (UserDTO) session.getAttribute("user");
 //        model.addAttribute("userSession", user);
@@ -71,13 +75,18 @@ public class RestPostController {
     @GetMapping("/post-list")
     public ApiResult<Page<Board>> postList(Model model,
         @PageableDefault(size = 10, sort = "boardId", direction = Direction.DESC)
-            Pageable pageable, @RequestHeader(value = "userToken", required = false) String userToken)
+            Pageable pageable, @RequestHeader(value = "userToken", required = false) String userToken,
+        HttpServletRequest request)
         throws UnsupportedEncodingException {
 
         String username = (String) JwtUtils.checkJwt(userToken).get("username");
         model.addAttribute("userToken", username);
 
-        return success(postService.getBoardList(pageable));
+        String searchText = request.getParameter("search");
+        searchText = searchText == null ? "" : searchText;
+        model.addAttribute("search", searchText);
+
+        return success(postService.getBoardList(searchText, pageable));
     }
 
     @RequestMapping(value = "/detail/{boardId}", method = RequestMethod.GET)

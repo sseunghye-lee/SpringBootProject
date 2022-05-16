@@ -47,9 +47,12 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
         return new PageImpl<>(myBoardList, pageable, total);
     }
 
-    public Page<Board> pagingBoardList(Pageable pageable) {
+    public Page<Board> pagingBoardList(String searchText, Pageable pageable) {
+        if(searchText == null) {
+            searchText = "";
+        }
         List<Board> boardList = jpaQueryFactory.selectFrom(qBoard)
-                .where(qBoard.delete.eq(0))
+                .where(qBoard.delete.eq(0).and(qBoard.title.contains(searchText)))
                 .orderBy(qBoard.boardId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -57,7 +60,7 @@ public class BoardRepositoryImpl extends QuerydslRepositorySupport {
 
         long total = jpaQueryFactory.select(qBoard.count())
                 .from(qBoard)
-                .where(qBoard.delete.eq(0))
+                .where(qBoard.delete.eq(0).and(qBoard.title.contains(searchText)))
                 .fetchOne();
 
         return new PageImpl<>(boardList, pageable, total);

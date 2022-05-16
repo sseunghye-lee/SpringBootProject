@@ -42,11 +42,143 @@
             })
         })
 
+        function createList(data) {
+            const postList = data.response.content;
+            const tbody = $("#postBody")[0];
+
+            while ( tbody.hasChildNodes() ) {
+                tbody.removeChild( tbody.firstChild );
+            }
+            for(const idx in postList) {
+                const post = postList[idx]
+
+                const newRow = tbody.insertRow()
+
+                const cell = newRow.insertCell()
+                cell.append(post.boardId)
+
+                const cell1 = newRow.insertCell()
+                cell1.append(post.title)
+
+                const cell2 = newRow.insertCell()
+                cell2.append(post.username)
+
+                const cell3 = newRow.insertCell()
+                const postLink = document.createElement("a")
+                const link = `/post_detail?boardId=${post.boardId}`
+                postLink.setAttribute("href", link)
+                postLink.append('보기')
+                cell3.append(postLink)
+
+                console.log(data)
+            }
+
+            console.log(data.response)
+            const totalPages = data.response.totalPages
+            const pageLimit = 5
+            const currentPage = data.response.pageable.pageNumber + 1
+            const page = $("#paging")[0]
+
+            while ( page.hasChildNodes() ) {
+                page.removeChild( page.firstChild );
+            }
+
+            // 페이징 처리 추가
+            let startPage = parseInt((currentPage - 1) / pageLimit) * pageLimit + 1;
+            let endPage = startPage + pageLimit - 1;
+
+            if(totalPages < endPage) {
+                endPage = totalPages
+            }
+
+            // 맨 첫 페이지
+            if(currentPage > 0 && pageLimit < currentPage) {
+                const first = document.createElement("a")
+                const li = document.createElement("li")
+                const firstLink = '#'
+                first.setAttribute("href", firstLink)
+                first.append("처음")
+                first.onclick = function () {
+                    $("#page").val(0)
+                    pageList()
+                }
+                li.append(first)
+                page.append(li)
+            }
+
+            // 이전 페이지
+            if(currentPage > pageLimit) {
+                const prev = document.createElement("a")
+                const li = document.createElement("li")
+                const prevLink = '#'
+                prev.setAttribute("href", prevLink)
+                prev.append("이전")
+                prev.onclick = function () {
+                    $("#page").val(startPage == 1 ? 0 : startPage - 2)
+                    pageList()
+                }
+                li.append(prev)
+                page.append(li)
+            }
+            for(let i = startPage; i <= endPage; i++) {
+                const li = document.createElement("li")
+                const a = document.createElement("a")
+                const link = '#'
+                // const link = '/post/list?page=' + i
+                a.setAttribute("href", link)
+                a.append(i)
+                a.onclick = function () {
+                    $("#page").val(i - 1)
+                    pageList()
+                }
+
+                li.append(a)
+                page.append(li)
+
+            }
+
+            // 다음 페이지
+            let nextPage = endPage + 1
+            if(nextPage <= totalPages) {
+                const next = document.createElement("a")
+                const li = document.createElement("li")
+                const nextLink = '#'
+                next.setAttribute("href", nextLink)
+                next.append("다음")
+                next.onclick = function () {
+                    $("#page").val(nextPage < totalPages ? nextPage - 1 : totalPages - 1)
+                    pageList()
+                }
+                li.append(next)
+                page.append(li)
+            }
+
+            // 맨 마지막 페이지
+            if(currentPage < totalPages && nextPage < totalPages) {
+                const last = document.createElement("a")
+                const li = document.createElement("li")
+                const lastLink = '#'
+                last.setAttribute("href", lastLink)
+                last.append("맨뒤")
+                last.onclick = function () {
+                    $("#page").val(totalPages - 1)
+                    pageList()
+                }
+                li.append(last)
+                page.append(li)
+            }
+        }
+
         function pageList() {
+            let search = $("#search").val()
+            if(search == "") {
+                search = ""
+            }
             $.ajax({
-                url:'/post-list?page=' + $("#page").val(),
+                url:'/post-list?page=' + $("#page").val() + "&search=" + $("#search").val(),
                 type:'GET',
                 dataType:'JSON',
+                data:{"search":search},
                 headers : {
                     userToken : getCookie("userToken")
                 },
@@ -56,130 +188,36 @@
                     location.href="/mainPage"
                 },
                 success:function(data) {
-                    const postList = data.response.content;
-                    const tbody = $("#postBody")[0];
+                    createList(data)
+                }
+            })
+        }
+    </script>
 
-                    while ( tbody.hasChildNodes() ) {
-                        tbody.removeChild( tbody.firstChild );
-                    }
-                    for(const idx in postList) {
-                        const post = postList[idx]
+    <script th:inline="javascript">
+        function searchBoard() {
+            let search = $("#search").val()
 
-                        const newRow = tbody.insertRow()
-
-                        const cell = newRow.insertCell()
-                        cell.append(post.boardId)
-
-                        const cell1 = newRow.insertCell()
-                        cell1.append(post.title)
-
-                        const cell2 = newRow.insertCell()
-                        cell2.append(post.username)
-
-                        const cell3 = newRow.insertCell()
-                        const postLink = document.createElement("a")
-                        const link = `/post_detail?boardId=${post.boardId}`
-                        postLink.setAttribute("href", link)
-                        postLink.append('보기')
-                        cell3.append(postLink)
-
-                        console.log(data)
-                    }
-
-                    console.log(data.response)
-                    const totalPages = data.response.totalPages
-                    const pageLimit = 5
-                    const currentPage = data.response.pageable.pageNumber + 1
-                    const page = $("#paging")[0]
-
-                    while ( page.hasChildNodes() ) {
-                        page.removeChild( page.firstChild );
-                    }
-
-                    // 페이징 처리 추가
-                    let startPage = parseInt((currentPage - 1) / pageLimit) * pageLimit + 1;
-                    let endPage = startPage + pageLimit - 1;
-
-                    if(totalPages < endPage) {
-                        endPage = totalPages
-                    }
-
-                    // 맨 첫 페이지
-                    if(currentPage > 0 && pageLimit < currentPage) {
-                        const first = document.createElement("a")
-                        const li = document.createElement("li")
-                        const firstLink = '#'
-                        first.setAttribute("href", firstLink)
-                        first.append("처음")
-                        first.onclick = function () {
-                            $("#page").val(0)
-                            pageList()
-                        }
-                        li.append(first)
-                        page.append(li)
-                    }
-
-                    // 이전 페이지
-                    if(currentPage > pageLimit) {
-                        const prev = document.createElement("a")
-                        const li = document.createElement("li")
-                        const prevLink = '#'
-                        prev.setAttribute("href", prevLink)
-                        prev.append("이전")
-                        prev.onclick = function () {
-                            $("#page").val(startPage == 1 ? 0 : startPage - 2)
-                            pageList()
-                        }
-                        li.append(prev)
-                        page.append(li)
-                    }
-                    for(let i = startPage; i <= endPage; i++) {
-                        const li = document.createElement("li")
-                        const a = document.createElement("a")
-                        const link = '#'
-                        // const link = '/post/list?page=' + i
-                        a.setAttribute("href", link)
-                        a.append(i)
-                        a.onclick = function () {
-                            $("#page").val(i - 1)
-                            pageList()
-                        }
-
-                        li.append(a)
-                        page.append(li)
-
-                    }
-
-                    // 다음 페이지
-                    let nextPage = endPage + 1
-                    if(nextPage <= totalPages) {
-                        const next = document.createElement("a")
-                        const li = document.createElement("li")
-                        const nextLink = '#'
-                        next.setAttribute("href", nextLink)
-                        next.append("다음")
-                        next.onclick = function () {
-                            $("#page").val(nextPage < totalPages ? nextPage - 1 : totalPages - 1)
-                            pageList()
-                        }
-                        li.append(next)
-                        page.append(li)
-                    }
-
-                    // 맨 마지막 페이지
-                    if(currentPage < totalPages && nextPage < totalPages) {
-                        const last = document.createElement("a")
-                        const li = document.createElement("li")
-                        const lastLink = '#'
-                        last.setAttribute("href", lastLink)
-                        last.append("맨뒤")
-                        last.onclick = function () {
-                            $("#page").val(totalPages - 1)
-                            pageList()
-                        }
-                        li.append(last)
-                        page.append(li)
-                    }
+            if(search == "") {
+                search == ""
+            }
+            console.log(search)
+            $.ajax({
+                url:'/post-list?page=0&search=' + $("#search").val(),
+                type:'GET',
+                dataType:'JSON',
+                data:{"search":search},
+                headers : {
+                    userToken : getCookie("userToken")
+                },
+                error:function(e) {
+                    console.log(e)
+                    alert("리스트를 불러오지 못했습니다")
+                    location.href="/mainPage"
+                },
+                success:function(data) {
+                    console.log(data)
+                    createList(data)
                 }
             })
         }
@@ -210,7 +248,9 @@
         <a th:href="@{/mainPage}" class="btn btn-primary btn-user btn-block">
             메인페이지로
         </a>
-
+        <br>
+        <input type="text" id="search" name="search">
+        <input type="button" id="searchButton" name="searchButton" th:value="검색" onclick="searchBoard()">
         <input type="hidden" id="page" th:value="${page}">
     </div>
     <div class="card-body">

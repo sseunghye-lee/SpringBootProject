@@ -105,7 +105,8 @@ class SpringBootProjectApplicationTests {
 
     @Test
     void getBoardList() throws Exception {
-        ResultActions result = this.mockMvc.perform(get("/post-list").param("size", "10").param("page", "0")
+        ResultActions result = this.mockMvc.perform(get("/post-list")
+            .param("size", "10").param("page", "0").param("search", "test")
             .header("userToken", getUserToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -120,7 +121,8 @@ class SpringBootProjectApplicationTests {
                 preprocessResponse(prettyPrint()),
                 requestParameters(
                     parameterWithName("page").description("조회할 페이지"),
-                    parameterWithName("size").description("한 페이지당 크기")
+                    parameterWithName("size").description("한 페이지당 크기"),
+                    parameterWithName("search").description("검색 키워드")
                 ),
                 responseFields(
                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("isSuccess"),

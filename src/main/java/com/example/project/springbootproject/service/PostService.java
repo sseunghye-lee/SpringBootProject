@@ -60,8 +60,8 @@ public class PostService {
         return boardRepositoryImpl.pagingMyBoardList(username, pageable);
     }
 
-    public Page<Board> getBoardList(Pageable pageable) {
-        return boardRepositoryImpl.pagingBoardList(pageable);
+    public Page<Board> getBoardList(String searchText, Pageable pageable) {
+        return boardRepositoryImpl.pagingBoardList(searchText, pageable);
     }
 
 }
